@@ -1,0 +1,1092 @@
+import { useState, useEffect, useRef, useCallback } from "react";
+
+/* ─────────────────────────────────────────────
+   QUARTZ  — Futuristic AI Study OS
+   Aesthetic: Holographic HUD / Sci-Fi Terminal
+   Fonts: Orbitron (display) + Rajdhani (body)
+───────────────────────────────────────────── */
+
+const STYLES = `
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --void:    #010409;
+  --deep:    #060d16;
+  --panel:   #080f1a;
+  --glass:   rgba(6,20,40,0.7);
+  --border:  rgba(0,200,255,0.12);
+  --border2: rgba(0,200,255,0.25);
+  --border3: rgba(0,200,255,0.5);
+  --cyan:    #00c8ff;
+  --cyan2:   #00eaff;
+  --cyan-dim:#003a4d;
+  --cyan-glow:rgba(0,200,255,0.15);
+  --blue:    #0066ff;
+  --amber:   #ffaa00;
+  --green:   #00ff88;
+  --red:     #ff3366;
+  --text:    #c8e8f5;
+  --muted:   #3a6070;
+  --bright:  #e8f8ff;
+  --r:       4px;
+  --r2:      8px;
+}
+
+html,body,#root{height:100%;background:var(--void);color:var(--text);
+  font-family:'Rajdhani',sans-serif;overflow-x:hidden}
+
+button{cursor:pointer;border:none;background:none;color:inherit;font:inherit}
+textarea,input{font:inherit}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--cyan-dim);border-radius:3px}
+
+/* ── SCANLINES ── */
+.scanlines{pointer-events:none;position:fixed;inset:0;z-index:9999;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.08) 2px,rgba(0,0,0,.08) 4px);
+  animation:scanMove 8s linear infinite}
+@keyframes scanMove{from{background-position:0 0}to{background-position:0 100%}}
+
+/* ── GRID BG ── */
+.grid-bg{position:fixed;inset:0;z-index:0;
+  background-image:
+    linear-gradient(rgba(0,200,255,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,200,255,.03) 1px,transparent 1px);
+  background-size:60px 60px;
+  animation:gridDrift 40s linear infinite}
+@keyframes gridDrift{from{background-position:0 0}to{background-position:60px 60px}}
+
+/* ── PARTICLE CANVAS ── */
+#particles{position:fixed;inset:0;z-index:1;pointer-events:none}
+
+/* ── GLOW ORBS ── */
+.orb{position:fixed;border-radius:50%;pointer-events:none;filter:blur(100px);z-index:0}
+.orb1{width:600px;height:600px;top:-200px;right:-150px;
+  background:radial-gradient(circle,rgba(0,100,255,.12),transparent 70%);
+  animation:orbFloat 15s ease-in-out infinite alternate}
+.orb2{width:500px;height:500px;bottom:-150px;left:-100px;
+  background:radial-gradient(circle,rgba(0,200,255,.08),transparent 70%);
+  animation:orbFloat 20s ease-in-out infinite alternate-reverse}
+.orb3{width:300px;height:300px;top:40%;left:40%;
+  background:radial-gradient(circle,rgba(0,255,136,.05),transparent 70%);
+  animation:orbFloat 12s ease-in-out infinite alternate}
+@keyframes orbFloat{
+  0%{transform:translate(0,0) scale(1)}
+  100%{transform:translate(30px,50px) scale(1.2)}}
+
+/* ── HUD CORNER BRACKETS ── */
+.hud-frame{position:relative}
+.hud-frame::before,.hud-frame::after,
+.hud-frame > .hud-br,.hud-frame > .hud-bl{
+  content:'';position:absolute;width:16px;height:16px;pointer-events:none;z-index:10}
+.hud-frame::before{top:0;left:0;
+  border-top:1px solid var(--cyan);border-left:1px solid var(--cyan)}
+.hud-frame::after{top:0;right:0;
+  border-top:1px solid var(--cyan);border-right:1px solid var(--cyan)}
+.hud-frame > .hud-br{bottom:0;right:0;
+  border-bottom:1px solid var(--cyan);border-right:1px solid var(--cyan)}
+.hud-frame > .hud-bl{bottom:0;left:0;
+  border-bottom:1px solid var(--cyan);border-left:1px solid var(--cyan)}
+
+/* ── GLITCH TEXT ── */
+@keyframes glitch1{
+  0%,90%,100%{clip-path:inset(0 0 100% 0);transform:translate(0)}
+  92%{clip-path:inset(20% 0 50% 0);transform:translate(-3px,1px)}
+  94%{clip-path:inset(60% 0 10% 0);transform:translate(3px,-1px)}
+  96%{clip-path:inset(40% 0 30% 0);transform:translate(-2px,2px)}
+}
+.glitch{position:relative}
+.glitch::before,.glitch::after{
+  content:attr(data-text);position:absolute;inset:0;
+  font:inherit;color:inherit}
+.glitch::before{color:var(--cyan);animation:glitch1 6s infinite;mix-blend-mode:screen;opacity:.4}
+.glitch::after{color:var(--red);animation:glitch1 6s infinite .15s;mix-blend-mode:screen;opacity:.25}
+
+/* ── TYPEWRITER ── */
+.typewriter{overflow:hidden;white-space:nowrap;
+  border-right:2px solid var(--cyan);
+  animation:typing 1.8s steps(30,end) forwards, blink .7s step-end infinite}
+@keyframes typing{from{width:0}to{width:100%}}
+@keyframes blink{50%{border-color:transparent}}
+
+/* ══════════════════════════════════════
+   HOME PAGE
+══════════════════════════════════════ */
+.home-page{
+  position:relative;z-index:2;
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:2rem;gap:3rem}
+
+.home-topbar{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.6rem 2rem;
+  border-bottom:1px solid var(--border);
+  background:rgba(1,4,9,.8);backdrop-filter:blur(20px)}
+.topbar-logo{
+  font-family:'Orbitron',sans-serif;font-size:.85rem;font-weight:700;
+  letter-spacing:4px;color:var(--cyan);text-transform:uppercase}
+.topbar-status{
+  display:flex;align-items:center;gap:.5rem;
+  font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--muted)}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 8px var(--green);animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.topbar-coords{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--muted)}
+
+/* Logo Crystal */
+.crystal-wrap{position:relative;width:100px;height:100px;margin:0 auto}
+.crystal{
+  width:100px;height:100px;
+  clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  background:linear-gradient(135deg,rgba(0,200,255,.9),rgba(0,80,255,.6),rgba(0,200,255,.4));
+  position:relative;animation:crystalSpin 8s linear infinite;
+  filter:drop-shadow(0 0 30px rgba(0,200,255,.6))}
+@keyframes crystalSpin{0%,100%{filter:drop-shadow(0 0 30px rgba(0,200,255,.6))}
+  50%{filter:drop-shadow(0 0 60px rgba(0,200,255,.9))}}
+.crystal-ring{
+  position:absolute;inset:-12px;
+  border:1px solid rgba(0,200,255,.3);
+  clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  animation:ringPulse 3s ease-in-out infinite}
+.crystal-ring2{
+  position:absolute;inset:-24px;
+  border:1px solid rgba(0,200,255,.12);
+  clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  animation:ringPulse 3s ease-in-out infinite .5s}
+@keyframes ringPulse{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:1;transform:scale(1.03)}}
+
+.home-title{
+  text-align:center;
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(3rem,10vw,6rem);
+  font-weight:900;letter-spacing:-1px;
+  background:linear-gradient(180deg,#fff 0%,var(--cyan2) 50%,var(--blue) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  filter:drop-shadow(0 0 30px rgba(0,200,255,.3));
+  line-height:1}
+.home-sub{
+  font-family:'Share Tech Mono',monospace;
+  font-size:.8rem;letter-spacing:3px;color:var(--muted);
+  text-transform:uppercase;margin-top:.8rem;text-align:center}
+.home-tagline{
+  font-size:.9rem;color:rgba(0,200,255,.6);
+  letter-spacing:1px;text-align:center;margin-top:.3rem}
+
+/* Mode Cards */
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;width:100%;max-width:620px}
+@media(max-width:500px){.mode-grid{grid-template-columns:1fr}}
+
+.mode-card{
+  position:relative;overflow:hidden;
+  background:var(--glass);
+  border:1px solid var(--border2);
+  border-radius:var(--r2);
+  padding:2rem 1.8rem;
+  display:flex;flex-direction:column;gap:1.2rem;
+  cursor:pointer;
+  transition:transform .25s cubic-bezier(.2,.8,.2,1),
+             border-color .25s,box-shadow .25s;
+  backdrop-filter:blur(20px)}
+.mode-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(0,200,255,.06),transparent 60%,rgba(0,80,255,.04));
+  opacity:0;transition:opacity .3s}
+.mode-card:hover{
+  transform:translateY(-6px) scale(1.01);
+  border-color:var(--cyan);
+  box-shadow:0 0 40px rgba(0,200,255,.15),0 20px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(0,200,255,.2)}
+.mode-card:hover::before{opacity:1}
+
+/* scan line sweep on hover */
+.mode-card::after{
+  content:'';position:absolute;top:-100%;left:0;right:0;height:40%;
+  background:linear-gradient(transparent,rgba(0,200,255,.04),transparent);
+  transition:top .6s ease}
+.mode-card:hover::after{top:200%}
+
+.card-header{display:flex;align-items:flex-start;justify-content:space-between}
+.card-icon-wrap{
+  width:52px;height:52px;
+  border:1px solid var(--border2);border-radius:var(--r);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.6rem;
+  background:rgba(0,200,255,.05);
+  transition:border-color .2s,background .2s;
+  position:relative}
+.mode-card:hover .card-icon-wrap{
+  border-color:var(--cyan);background:rgba(0,200,255,.12);
+  box-shadow:0 0 20px rgba(0,200,255,.2)}
+.card-tag{
+  font-family:'Share Tech Mono',monospace;font-size:.6rem;
+  color:var(--cyan);background:rgba(0,200,255,.08);
+  border:1px solid var(--border2);padding:.2rem .5rem;border-radius:2px;
+  letter-spacing:1px}
+.card-title{
+  font-family:'Orbitron',sans-serif;font-size:1.1rem;font-weight:700;
+  color:var(--bright);letter-spacing:1px}
+.card-desc{font-size:.85rem;color:var(--muted);line-height:1.6;font-weight:300}
+.card-pills{display:flex;gap:.4rem;flex-wrap:wrap}
+.pill{
+  font-size:.65rem;padding:.15rem .55rem;border-radius:2px;
+  border:1px solid var(--border);color:var(--muted);letter-spacing:.5px;
+  font-family:'Share Tech Mono',monospace}
+.card-arrow{
+  display:flex;align-items:center;gap:.5rem;
+  font-size:.75rem;font-family:'Share Tech Mono',monospace;
+  color:var(--muted);transition:color .2s,gap .2s}
+.mode-card:hover .card-arrow{color:var(--cyan);gap:.8rem}
+
+/* ══════════════════════════════════════
+   SHELL LAYOUT (School / Home Mode)
+══════════════════════════════════════ */
+.shell{position:relative;z-index:2;display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+@media(max-width:700px){.shell{grid-template-columns:1fr}}
+
+/* SIDEBAR */
+.sidebar{
+  background:rgba(4,10,20,.95);
+  border-right:1px solid var(--border);
+  padding:1.2rem .8rem;
+  display:flex;flex-direction:column;gap:.3rem;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+  backdrop-filter:blur(30px)}
+.sb-logo{
+  display:flex;align-items:center;gap:.7rem;
+  padding:.6rem .7rem;margin-bottom:.5rem;cursor:pointer}
+.sb-gem{
+  width:26px;height:26px;flex-shrink:0;
+  clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  background:linear-gradient(135deg,var(--cyan),var(--blue));
+  box-shadow:0 0 12px rgba(0,200,255,.4)}
+.sb-name{
+  font-family:'Orbitron',sans-serif;font-weight:700;font-size:.85rem;
+  letter-spacing:2px;color:var(--cyan)}
+
+.sb-divider{
+  height:1px;background:var(--border);margin:.5rem 0 .8rem;
+  position:relative;overflow:hidden}
+.sb-divider::after{
+  content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  animation:scanH 3s linear infinite}
+@keyframes scanH{to{left:200%}}
+
+.sb-section{
+  font-family:'Share Tech Mono',monospace;font-size:.6rem;
+  letter-spacing:2px;color:var(--muted);padding:.2rem .7rem;margin-top:.3rem}
+.sb-btn{
+  display:flex;align-items:center;gap:.7rem;
+  padding:.6rem .8rem;border-radius:var(--r);
+  font-size:.85rem;font-weight:500;color:var(--muted);
+  transition:all .15s;letter-spacing:.5px;width:100%;text-align:left;
+  position:relative;overflow:hidden}
+.sb-btn::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:var(--cyan);transform:scaleY(0);transition:transform .15s;border-radius:0 1px 1px 0}
+.sb-btn:hover,.sb-btn.act{
+  color:var(--cyan);background:rgba(0,200,255,.06)}
+.sb-btn.act::before{transform:scaleY(1)}
+.sb-btn:hover::before{transform:scaleY(.5)}
+
+.sb-new{
+  margin-top:auto;
+  display:flex;align-items:center;gap:.6rem;
+  padding:.7rem 1rem;border-radius:var(--r);
+  background:linear-gradient(135deg,rgba(0,200,255,.12),rgba(0,80,255,.08));
+  border:1px solid var(--border2);
+  color:var(--cyan);font-size:.85rem;font-weight:600;
+  letter-spacing:1px;font-family:'Share Tech Mono',monospace;
+  transition:all .2s;width:100%}
+.sb-new:hover{
+  background:linear-gradient(135deg,rgba(0,200,255,.2),rgba(0,80,255,.15));
+  border-color:var(--cyan);box-shadow:0 0 20px rgba(0,200,255,.15)}
+
+/* ══════════════════════════════════════
+   CHAT
+══════════════════════════════════════ */
+.chat-shell{display:flex;flex-direction:column;height:100vh}
+.chat-hdr{
+  border-bottom:1px solid var(--border);
+  padding:.9rem 1.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(1,4,9,.9);backdrop-filter:blur(20px)}
+.chat-hdr-left{display:flex;align-items:center;gap:1rem}
+.chat-title{
+  font-family:'Orbitron',sans-serif;font-size:.85rem;font-weight:600;
+  letter-spacing:2px;color:var(--bright)}
+.hdr-badge{
+  font-family:'Share Tech Mono',monospace;font-size:.65rem;
+  padding:.25rem .6rem;border-radius:2px;
+  background:rgba(0,200,255,.08);border:1px solid var(--border2);
+  color:var(--cyan);letter-spacing:1px}
+.hdr-live{
+  display:flex;align-items:center;gap:.4rem;
+  font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--green)}
+
+.chat-msgs{
+  flex:1;overflow-y:auto;padding:1.5rem;
+  display:flex;flex-direction:column;gap:1.4rem}
+
+.msg{display:flex;gap:1rem;animation:msgIn .3s cubic-bezier(.2,.8,.2,1)}
+@keyframes msgIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.msg.user{flex-direction:row-reverse}
+
+.msg-av{
+  width:34px;height:34px;flex-shrink:0;
+  clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Orbitron',sans-serif;font-size:.6rem;font-weight:700}
+.msg-av.ai{background:linear-gradient(135deg,rgba(0,200,255,.4),rgba(0,80,255,.3));color:var(--cyan)}
+.msg-av.us{background:linear-gradient(135deg,rgba(0,80,255,.3),rgba(0,200,255,.2));color:var(--text)}
+
+.msg-bub{
+  max-width:70%;padding:.9rem 1.2rem;
+  border-radius:0 var(--r2) var(--r2) var(--r2);
+  font-size:.9rem;line-height:1.7;font-weight:400;
+  position:relative}
+.msg.user .msg-bub{border-radius:var(--r2) 0 var(--r2) var(--r2)}
+.msg.ai .msg-bub{
+  background:rgba(0,200,255,.04);
+  border:1px solid var(--border2);
+  border-left:2px solid var(--cyan)}
+.msg.user .msg-bub{
+  background:rgba(0,80,255,.1);
+  border:1px solid rgba(0,80,255,.25);
+  border-right:2px solid var(--blue)}
+
+/* typing indicator */
+.typing{display:flex;gap:4px;align-items:center;padding:.8rem 1.1rem}
+.typing span{
+  width:6px;height:6px;border-radius:50%;background:var(--cyan);
+  animation:typingBounce .9s ease-in-out infinite}
+.typing span:nth-child(2){animation-delay:.15s}
+.typing span:nth-child(3){animation-delay:.3s}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+
+.chat-inp-wrap{
+  border-top:1px solid var(--border);
+  padding:1rem 1.5rem;
+  background:rgba(1,4,9,.9)}
+.chat-inp-row{
+  display:flex;gap:.7rem;align-items:flex-end;
+  background:rgba(0,200,255,.03);
+  border:1px solid var(--border2);
+  border-radius:var(--r2);padding:.7rem .8rem;
+  transition:border-color .2s,box-shadow .2s;
+  position:relative;overflow:hidden}
+.chat-inp-row::before{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  transform:scaleX(0);transition:transform .3s}
+.chat-inp-row:focus-within{
+  border-color:var(--cyan);
+  box-shadow:0 0 20px rgba(0,200,255,.1)}
+.chat-inp-row:focus-within::before{transform:scaleX(1)}
+.chat-inp{
+  flex:1;background:none;border:none;outline:none;
+  color:var(--bright);font-size:.9rem;resize:none;
+  max-height:120px;line-height:1.5;font-weight:400;
+  font-family:'Rajdhani',sans-serif}
+.chat-inp::placeholder{color:var(--muted)}
+.send-btn{
+  width:38px;height:38px;border-radius:var(--r);flex-shrink:0;
+  background:linear-gradient(135deg,rgba(0,200,255,.2),rgba(0,80,255,.15));
+  border:1px solid var(--border2);color:var(--cyan);
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s}
+.send-btn:hover{
+  background:linear-gradient(135deg,rgba(0,200,255,.35),rgba(0,80,255,.25));
+  border-color:var(--cyan);box-shadow:0 0 16px rgba(0,200,255,.25);
+  transform:scale(1.05)}
+.inp-hint{
+  font-family:'Share Tech Mono',monospace;font-size:.65rem;
+  color:var(--muted);text-align:center;margin-top:.5rem;letter-spacing:.5px}
+
+/* ══════════════════════════════════════
+   HOME MODE DASHBOARD
+══════════════════════════════════════ */
+.dash{padding:1.8rem;overflow-y:auto;height:100vh}
+
+.dash-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:2rem;padding-bottom:1rem;
+  border-bottom:1px solid var(--border)}
+.dash-greeting h1{
+  font-family:'Orbitron',sans-serif;font-size:1.4rem;font-weight:800;
+  letter-spacing:1px;color:var(--bright)}
+.dash-greeting p{
+  font-family:'Share Tech Mono',monospace;font-size:.72rem;
+  color:var(--muted);margin-top:.3rem;letter-spacing:.5px}
+.dash-time{
+  font-family:'Share Tech Mono',monospace;font-size:.75rem;
+  color:var(--cyan);text-align:right}
+
+/* Streak bar */
+.streak-wrap{margin-bottom:2rem}
+.streak-label{
+  font-family:'Share Tech Mono',monospace;font-size:.65rem;
+  color:var(--muted);letter-spacing:2px;margin-bottom:.6rem}
+.streak-bar{display:flex;gap:.4rem}
+.streak-day{
+  flex:1;height:4px;border-radius:2px;
+  background:var(--border);transition:background .3s,box-shadow .3s}
+.streak-day.done{
+  background:var(--amber);
+  box-shadow:0 0 8px rgba(255,170,0,.5)}
+
+/* Stat cards */
+.stats-row{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1rem;margin-bottom:2rem}
+@media(max-width:560px){.stats-row{grid-template-columns:1fr 1fr}}
+.stat-card{
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:var(--r2);padding:1.2rem 1rem;
+  position:relative;overflow:hidden;
+  backdrop-filter:blur(20px);
+  transition:border-color .2s,box-shadow .2s}
+.stat-card:hover{border-color:var(--border2);box-shadow:0 0 20px var(--cyan-glow)}
+.stat-card::after{
+  content:'';position:absolute;top:0;right:0;width:50%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan))}
+.stat-icon{
+  width:32px;height:32px;
+  clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.9rem;margin-bottom:.8rem}
+.stat-icon.flame{background:rgba(255,170,0,.15)}
+.stat-icon.star {background:rgba(0,255,136,.1)}
+.stat-icon.cred {background:rgba(0,200,255,.1)}
+.stat-val{
+  font-family:'Orbitron',sans-serif;font-size:1.8rem;
+  font-weight:900;color:var(--bright);line-height:1}
+.stat-label{
+  font-family:'Share Tech Mono',monospace;font-size:.62rem;
+  color:var(--muted);letter-spacing:1.5px;margin-top:.4rem}
+
+/* Section headers */
+.sec-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1rem;padding-bottom:.5rem;
+  border-bottom:1px solid var(--border)}
+.sec-hdr h3{
+  font-family:'Orbitron',sans-serif;font-size:.8rem;
+  font-weight:700;letter-spacing:2px;color:var(--text)}
+.sec-hdr button{
+  font-family:'Share Tech Mono',monospace;font-size:.65rem;
+  color:var(--cyan);letter-spacing:1px}
+
+/* Notes */
+.notes-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+  gap:.9rem;margin-bottom:2rem}
+.note-card{
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:var(--r2);padding:1.1rem;
+  cursor:pointer;position:relative;overflow:hidden;
+  backdrop-filter:blur(20px);
+  transition:transform .2s,border-color .2s,box-shadow .2s}
+.note-card:hover{
+  transform:translateY(-3px);border-color:var(--border2);
+  box-shadow:0 0 24px var(--cyan-glow)}
+.note-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  opacity:0;transition:opacity .3s}
+.note-card:hover::before{opacity:1}
+.note-tag{
+  font-family:'Share Tech Mono',monospace;font-size:.62rem;
+  letter-spacing:1px;padding:.15rem .5rem;border-radius:2px;
+  background:rgba(0,200,255,.08);border:1px solid var(--border);
+  color:var(--cyan);display:inline-block;margin-bottom:.7rem}
+.note-title{font-size:.92rem;font-weight:600;color:var(--bright);margin-bottom:.4rem}
+.note-preview{font-size:.77rem;color:var(--muted);line-height:1.55}
+
+/* Chat history */
+.chat-hist{display:flex;flex-direction:column;gap:.5rem;margin-bottom:2rem}
+.ch-item{
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:var(--r2);padding:.8rem 1rem;
+  display:flex;align-items:center;gap:.9rem;
+  cursor:pointer;backdrop-filter:blur(20px);
+  transition:border-color .15s,box-shadow .15s}
+.ch-item:hover{border-color:var(--border2);box-shadow:0 0 16px var(--cyan-glow)}
+.ch-ico{color:var(--muted)}
+.ch-title{font-size:.88rem;font-weight:500;color:var(--text)}
+.ch-date{font-family:'Share Tech Mono',monospace;font-size:.68rem;color:var(--muted);margin-top:.15rem}
+
+/* ══════════════════════════════════════
+   VISUALIZATIONS
+══════════════════════════════════════ */
+.viz-shell{display:grid;grid-template-columns:220px 1fr;min-height:100vh;position:relative;z-index:2}
+@media(max-width:700px){.viz-shell{grid-template-columns:1fr}}
+
+.viz-main{padding:1.8rem;overflow-y:auto;height:100vh}
+.viz-main h2{
+  font-family:'Orbitron',sans-serif;font-size:1.2rem;
+  font-weight:800;letter-spacing:2px;color:var(--bright);margin-bottom:.3rem}
+.viz-main > p{
+  font-family:'Share Tech Mono',monospace;font-size:.72rem;
+  color:var(--muted);margin-bottom:1.5rem;letter-spacing:.5px}
+
+.api-banner{
+  background:rgba(0,200,255,.03);
+  border:1px solid var(--border2);
+  border-left:2px solid var(--cyan);
+  border-radius:var(--r2);padding:1.1rem 1.3rem;
+  margin-bottom:1.8rem;
+  font-size:.82rem;line-height:1.7;color:var(--muted)}
+.api-banner strong{color:var(--bright)}
+.api-banner code{
+  font-family:'Share Tech Mono',monospace;font-size:.78rem;
+  background:rgba(0,200,255,.08);border:1px solid var(--border);
+  border-radius:2px;padding:.1rem .45rem;color:var(--cyan)}
+
+.viz-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+  gap:1.1rem}
+.viz-card{
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:var(--r2);padding:1.2rem;
+  cursor:pointer;backdrop-filter:blur(20px);
+  transition:transform .2s,border-color .2s,box-shadow .2s;
+  display:flex;flex-direction:column;gap:.9rem;
+  position:relative;overflow:hidden}
+.viz-card:hover{
+  transform:translateY(-4px);border-color:var(--cyan);
+  box-shadow:0 0 40px rgba(0,200,255,.12),0 16px 40px rgba(0,0,0,.4)}
+.viz-cv{
+  border-radius:var(--r);overflow:hidden;
+  background:#020810;border:1px solid var(--border);
+  aspect-ratio:4/3;display:flex;align-items:center;justify-content:center}
+.viz-cv canvas{display:block}
+.viz-title{
+  font-family:'Orbitron',sans-serif;font-size:.82rem;
+  font-weight:700;letter-spacing:1px;color:var(--bright)}
+.viz-desc{font-size:.78rem;color:var(--muted);line-height:1.5}
+.viz-tag{
+  font-family:'Share Tech Mono',monospace;font-size:.62rem;
+  padding:.15rem .5rem;border-radius:2px;
+  border:1px solid var(--border);color:var(--muted)}
+
+/* back btn */
+.back-btn{
+  display:inline-flex;align-items:center;gap:.5rem;
+  font-family:'Share Tech Mono',monospace;font-size:.72rem;
+  color:var(--muted);padding:.4rem .7rem;border-radius:var(--r);
+  letter-spacing:1px;margin-bottom:1rem;
+  transition:color .15s,background .15s}
+.back-btn:hover{color:var(--cyan);background:rgba(0,200,255,.06)}
+`;
+
+/* ── PARTICLE SYSTEM ─────────────────────────────────────────── */
+function ParticleField() {
+  const ref = useRef();
+  useEffect(() => {
+    const c = ref.current; const ctx = c.getContext("2d");
+    let W = c.width = window.innerWidth, H = c.height = window.innerHeight;
+    const resize = () => { W = c.width = window.innerWidth; H = c.height = window.innerHeight; };
+    window.addEventListener("resize", resize);
+    const N = 60;
+    const pts = Array.from({length:N}, () => ({
+      x: Math.random()*W, y: Math.random()*H,
+      vx: (Math.random()-.5)*.3, vy: (Math.random()-.5)*.3,
+      r: Math.random()*1.5+.5, o: Math.random()*.5+.1
+    }));
+    let raf;
+    const draw = () => {
+      ctx.clearRect(0,0,W,H);
+      pts.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+        if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle=`rgba(0,200,255,${p.o})`; ctx.fill();
+      });
+      pts.forEach((a,i) => pts.slice(i+1).forEach(b => {
+        const dx=a.x-b.x, dy=a.y-b.y, d=Math.sqrt(dx*dx+dy*dy);
+        if(d<100){
+          ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+          ctx.strokeStyle=`rgba(0,200,255,${.05*(1-d/100)})`; ctx.lineWidth=.5; ctx.stroke();
+        }
+      }));
+      raf = requestAnimationFrame(draw);
+    };
+    draw();
+    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize",resize); };
+  }, []);
+  return <canvas ref={ref} id="particles" />;
+}
+
+/* ── CLOCK ───────────────────────────────────────────────────── */
+function useClock() {
+  const [t, setT] = useState(new Date());
+  useEffect(() => { const id = setInterval(() => setT(new Date()), 1000); return () => clearInterval(id); }, []);
+  return t;
+}
+
+/* ── CANVAS VIZ ──────────────────────────────────────────────── */
+function useAnimCanvas(draw) {
+  const ref = useRef(); const frame = useRef(0);
+  useEffect(() => {
+    const c = ref.current, ctx = c.getContext("2d"); let t = 0, raf;
+    const loop = () => { draw(ctx, c.width, c.height, t++); raf = requestAnimationFrame(loop); };
+    loop(); return () => cancelAnimationFrame(raf);
+  }, []);
+  return ref;
+}
+
+function CubeViz() {
+  const ref = useAnimCanvas((ctx, W, H, t) => {
+    ctx.clearRect(0,0,W,H);
+    const cx=W/2, cy=H/2, s=52, a=t*.013;
+    const cos=Math.cos(a), sin=Math.sin(a);
+    const proj=([x,y,z])=>[cx+(x*cos-z*sin),cy+y+(x*sin+z*cos)*.42];
+    const v=[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]].map(p=>p.map(c=>c*s));
+    const pts=v.map(proj);
+    const faces=[[0,1,2,3],[4,5,6,7],[0,1,5,4],[2,3,7,6],[0,3,7,4],[1,2,6,5]];
+    faces.forEach(f=>{
+      ctx.beginPath();f.forEach((i,j)=>j===0?ctx.moveTo(...pts[i]):ctx.lineTo(...pts[i]));
+      ctx.closePath();ctx.fillStyle="rgba(0,200,255,0.04)";ctx.fill();});
+    [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]].forEach(([a,b])=>{
+      ctx.beginPath();ctx.moveTo(...pts[a]);ctx.lineTo(...pts[b]);
+      ctx.strokeStyle=`rgba(0,200,255,${.4+.3*Math.sin(t*.02)})`;ctx.lineWidth=1.2;ctx.stroke();});
+    pts.forEach(([x,y])=>{ctx.beginPath();ctx.arc(x,y,2,0,Math.PI*2);ctx.fillStyle="rgba(0,234,255,0.7)";ctx.fill();});
+  });
+  return <canvas ref={ref} width={200} height={150}/>;
+}
+
+function PyramidViz() {
+  const ref = useAnimCanvas((ctx,W,H,t)=>{
+    ctx.clearRect(0,0,W,H);
+    const cx=W/2,cy=H/2+12,a=t*.013,h=58,b=52;
+    const cos=Math.cos(a),sin=Math.sin(a);
+    const proj=([x,y,z])=>[cx+(x*cos-z*sin),cy+y+(x*sin+z*cos)*.42];
+    const v=[[-b,0,-b],[b,0,-b],[b,0,b],[-b,0,b],[0,-h,0]].map(proj);
+    [[0,1],[1,2],[2,3],[3,0],[0,4],[1,4],[2,4],[3,4]].forEach(([a,b])=>{
+      ctx.beginPath();ctx.moveTo(...v[a]);ctx.lineTo(...v[b]);
+      ctx.strokeStyle=`rgba(167,139,250,${.5+.2*Math.sin(t*.025)})`;ctx.lineWidth=1.2;ctx.stroke();});
+    [[0,1,4],[1,2,4],[2,3,4],[3,0,4],[0,1,2,3]].forEach(f=>{
+      ctx.beginPath();f.forEach((i,j)=>j===0?ctx.moveTo(...v[i]):ctx.lineTo(...v[i]));
+      ctx.closePath();ctx.fillStyle="rgba(167,139,250,0.05)";ctx.fill();});
+  });
+  return <canvas ref={ref} width={200} height={150}/>;
+}
+
+function AtomViz() {
+  const ref = useAnimCanvas((ctx,W,H,t)=>{
+    ctx.clearRect(0,0,W,H);
+    const cx=W/2,cy=H/2;
+    const sg=ctx.createRadialGradient(cx,cy,0,cx,cy,12);
+    sg.addColorStop(0,"#fff8e0");sg.addColorStop(1,"#ffaa00");
+    ctx.beginPath();ctx.arc(cx,cy,10,0,Math.PI*2);ctx.fillStyle=sg;ctx.fill();
+    ctx.beginPath();ctx.arc(cx,cy,13,0,Math.PI*2);
+    ctx.strokeStyle="rgba(255,170,0,0.3)";ctx.lineWidth=2;ctx.stroke();
+    const orbs=[
+      {rx:62,ry:18,ang:0,sp:.018,col:"#00c8ff",er:4},
+      {rx:48,ry:28,ang:Math.PI/3,sp:.014,col:"#a78bfa",er:4},
+      {rx:32,ry:38,ang:-Math.PI/4,sp:.024,col:"#00ff88",er:3},
+    ];
+    orbs.forEach(o=>{
+      ctx.save();ctx.translate(cx,cy);ctx.rotate(o.ang);
+      ctx.beginPath();ctx.ellipse(0,0,o.rx,o.ry,0,0,Math.PI*2);
+      ctx.strokeStyle=o.col+"40";ctx.lineWidth=1;ctx.stroke();
+      const ea=t*o.sp, ex=o.rx*Math.cos(ea),ey=o.ry*Math.sin(ea);
+      const eg=ctx.createRadialGradient(ex,ey,0,ex,ey,o.er*2);
+      eg.addColorStop(0,o.col);eg.addColorStop(1,o.col+"00");
+      ctx.beginPath();ctx.arc(ex,ey,o.er*2,0,Math.PI*2);ctx.fillStyle=eg;ctx.fill();
+      ctx.beginPath();ctx.arc(ex,ey,o.er,0,Math.PI*2);ctx.fillStyle=o.col;ctx.fill();
+      ctx.restore();
+    });
+  });
+  return <canvas ref={ref} width={200} height={150}/>;
+}
+
+function SolarViz() {
+  const ref = useAnimCanvas((ctx,W,H,t)=>{
+    ctx.clearRect(0,0,W,H);
+    const cx=W/2,cy=H/2;
+    const sg=ctx.createRadialGradient(cx,cy,1,cx,cy,16);
+    sg.addColorStop(0,"#fff8d0");sg.addColorStop(.5,"#ffcc44");sg.addColorStop(1,"#ff6600");
+    ctx.beginPath();ctx.arc(cx,cy,14,0,Math.PI*2);ctx.fillStyle=sg;ctx.fill();
+    ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);
+    ctx.strokeStyle="rgba(255,200,0,.15)";ctx.lineWidth=4;ctx.stroke();
+    [{d:26,r:4,sp:.048,c:"#aaaaaa"},{d:42,r:5,sp:.032,c:"#e8c47a"},
+     {d:60,r:6,sp:.022,c:"#4fa3e0"},{d:78,r:5,sp:.014,c:"#f97316"}].forEach(p=>{
+      ctx.beginPath();ctx.arc(cx,cy,p.d,0,Math.PI*2);
+      ctx.strokeStyle="rgba(255,255,255,0.05)";ctx.lineWidth=1;ctx.stroke();
+      const a=t*p.sp;
+      const pg=ctx.createRadialGradient(cx+p.d*Math.cos(a),cy+p.d*Math.sin(a),0,cx+p.d*Math.cos(a),cy+p.d*Math.sin(a),p.r*2);
+      pg.addColorStop(0,p.c);pg.addColorStop(1,p.c+"00");
+      ctx.beginPath();ctx.arc(cx+p.d*Math.cos(a),cy+p.d*Math.sin(a),p.r*1.8,0,Math.PI*2);
+      ctx.fillStyle=pg;ctx.fill();
+      ctx.beginPath();ctx.arc(cx+p.d*Math.cos(a),cy+p.d*Math.sin(a),p.r,0,Math.PI*2);
+      ctx.fillStyle=p.c;ctx.fill();
+    });
+  });
+  return <canvas ref={ref} width={200} height={150}/>;
+}
+
+function CylinderViz() {
+  const ref = useAnimCanvas((ctx,W,H,t)=>{
+    ctx.clearRect(0,0,W,H);
+    const cx=W/2,cy=H/2,h=68,a=t*.013;
+    const rx=Math.max(8,46*Math.abs(Math.cos(a))),ry=17;
+    ctx.strokeStyle=`rgba(0,255,136,${.4+.2*Math.sin(t*.025)})`;ctx.lineWidth=1.2;
+    ctx.fillStyle="rgba(0,255,136,0.04)";
+    ctx.beginPath();
+    ctx.moveTo(cx-rx,cy-h/2);ctx.lineTo(cx-rx,cy+h/2);
+    ctx.ellipse(cx,cy+h/2,rx,ry,0,Math.PI,0);
+    ctx.lineTo(cx+rx,cy-h/2);
+    ctx.ellipse(cx,cy-h/2,rx,ry,0,0,Math.PI);
+    ctx.closePath();ctx.fill();ctx.stroke();
+    ctx.beginPath();ctx.ellipse(cx,cy-h/2,rx,ry,0,0,Math.PI*2);ctx.stroke();
+  });
+  return <canvas ref={ref} width={200} height={150}/>;
+}
+
+/* ── DATA ────────────────────────────────────────────────────── */
+const NOTES=[
+  {tag:"PHYSICS",title:"Newton's Laws",preview:"Forces, acceleration and the basics of classical mechanics in motion."},
+  {tag:"MATH",title:"Quadratic Eq.",preview:"Solving ax² + bx + c = 0 using discriminant and quadratic formula."},
+  {tag:"BIOLOGY",title:"Cell Structure",preview:"Eukaryotic vs prokaryotic — organelles, membranes, ribosomes."},
+  {tag:"CHEM",title:"Periodic Table",preview:"Groups, periods, electron configurations and element trends."},
+];
+const CHATS=[
+  {title:"Explain photosynthesis",date:"TODAY · 11:24"},
+  {title:"Calculus — chain rule",date:"YESTERDAY · 21:05"},
+  {title:"WW2 causes & timeline",date:"MON · 15:40"},
+];
+const VIZDATA=[
+  {title:"CUBE",desc:"Wire-frame cube — explore faces, edges & vertices in 3D.",tag:"GEOMETRY",Comp:CubeViz},
+  {title:"PYRAMID",desc:"Square pyramid — surface area & volume relationships.",tag:"GEOMETRY",Comp:PyramidViz},
+  {title:"ATOM MODEL",desc:"Bohr model with 3 orbiting electrons around a charged nucleus.",tag:"CHEMISTRY",Comp:AtomViz},
+  {title:"SOLAR SYSTEM",desc:"Inner planets orbiting at scaled relative angular velocities.",tag:"ASTRONOMY",Comp:SolarViz},
+  {title:"CYLINDER",desc:"Rotating cylinder — curved surface area and height study.",tag:"GEOMETRY",Comp:CylinderViz},
+];
+const INIT_MSGS=[
+  {role:"ai",text:"QUARTZ OS v2.4.1 — INITIALISED\nAI core online. This is a temporary session — no data will be saved.\nHow can I assist your studies today?"},
+  {role:"user",text:"Can you explain Newton's second law?"},
+  {role:"ai",text:"Newton's Second Law: F = ma\n\nForce equals mass times acceleration. The greater an object's mass, or the faster you want to accelerate it, the more force you need.\n\nExample: Pushing a loaded cart requires far more force than an empty one — same acceleration, higher mass, more force required."},
+];
+
+/* ── SVG ICONS ───────────────────────────────────────────────── */
+const Ico=({d,s=18})=><svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round"><path d={d}/></svg>;
+const IcoSend=()=><Ico d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>;
+const IcoPlus=()=><Ico d="M12 5v14M5 12h14"/>;
+const IcoChat=()=><Ico d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>;
+const IcoNote=()=><Ico d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8"/>;
+const IcoFlame=()=><Ico d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 01-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/>;
+const IcoStar=()=><Ico d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>;
+const IcoCube=()=><Ico d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>;
+const IcoX=()=><Ico d="M18 6L6 18M6 6l12 12"/>;
+const IcoDash=()=><Ico d="M3 12h18M3 6h18M3 18h18"/>;
+const IcoArrow=()=><Ico d="M5 12h14M12 5l7 7-7 7"/>;
+
+/* ── SIDEBAR ─────────────────────────────────────────────────── */
+function Sidebar({active, onNav, onBack, extra}) {
+  return (
+    <aside className="sidebar">
+      <div className="sb-logo" onClick={onBack}>
+        <div className="sb-gem"/>
+        <span className="sb-name">QUARTZ</span>
+      </div>
+      <div className="sb-divider"/>
+      {extra}
+      <div className="sb-btn" style={{marginTop:"auto"}} onClick={onBack}>
+        <IcoX/> EXIT MODE
+      </div>
+    </aside>
+  );
+}
+
+/* ══════════════════════════════════════
+   MAIN APP
+══════════════════════════════════════ */
+export default function App() {
+  const [view, setView] = useState("home");
+  const [msgs, setMsgs] = useState(INIT_MSGS);
+  const [input, setInput] = useState("");
+  const [typing, setTyping] = useState(false);
+  const [hmSub, setHmSub] = useState("dashboard");
+  const msgEnd = useRef();
+  const clock = useClock();
+
+  useEffect(() => { msgEnd.current?.scrollIntoView({behavior:"smooth"}); }, [msgs, typing]);
+
+  const send = () => {
+    const txt = input.trim(); if(!txt) return;
+    setMsgs(m=>[...m,{role:"user",text:txt}]);
+    setInput(""); setTyping(true);
+    setTimeout(()=>{
+      setTyping(false);
+      // ↓ PASTE YOUR OPENAI API KEY HERE — replace the setTimeout with a real fetch call
+      setMsgs(m=>[...m,{role:"ai",text:"[ AI RESPONSE PLACEHOLDER ]\n\nTo enable real AI responses, replace this setTimeout block with a fetch to https://api.openai.com/v1/chat/completions — add Authorization: Bearer YOUR_KEY in headers. See the Visualizations page for full instructions."}]);
+    }, 1200);
+  };
+
+  const timeStr = clock.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});
+  const dateStr = clock.toLocaleDateString("en-US",{weekday:"short",day:"2-digit",month:"short"}).toUpperCase();
+
+  return (
+    <>
+      <style>{STYLES}</style>
+      <div className="scanlines"/>
+      <div className="grid-bg"/>
+      <div className="orb orb1"/><div className="orb orb2"/><div className="orb orb3"/>
+      <ParticleField/>
+
+      {/* ── HOME ─────────────────────────────────────────────────── */}
+      {view==="home" && (
+        <div className="home-page">
+          {/* top bar */}
+          <div className="home-topbar">
+            <span className="topbar-logo">◆ QUARTZ</span>
+            <div className="topbar-status">
+              <span className="status-dot"/>
+              <span>SYSTEM ONLINE</span>
+            </div>
+            <span className="topbar-coords">{dateStr} · {timeStr}</span>
+          </div>
+
+          {/* logo */}
+          <div style={{textAlign:"center",marginTop:"1rem"}}>
+            <div className="crystal-wrap">
+              <div className="crystal-ring2"/>
+              <div className="crystal-ring"/>
+              <div className="crystal"/>
+            </div>
+            <div className="home-title glitch" data-text="QUARTZ" style={{marginTop:"1.5rem"}}>QUARTZ</div>
+            <div className="home-sub">AI STUDY OPERATING SYSTEM</div>
+            <div className="home-tagline">SELECT OPERATIONAL MODE TO BEGIN</div>
+          </div>
+
+          {/* mode cards */}
+          <div className="mode-grid">
+            <div className="mode-card hud-frame" onClick={()=>setView("school")}>
+              <div className="hud-br"/><div className="hud-bl"/>
+              <div className="card-header">
+                <div className="card-icon-wrap">🏫</div>
+                <span className="card-tag">NO LOGIN</span>
+              </div>
+              <div className="card-title">SCHOOL MODE</div>
+              <div className="card-desc">Temporary sessions. No data saved. Instant access for classroom use.</div>
+              <div className="card-pills">
+                <span className="pill">QUICK ACCESS</span>
+                <span className="pill">TEMP CHAT</span>
+                <span className="pill">ANONYMOUS</span>
+              </div>
+              <div className="card-arrow"><IcoArrow/> ENTER</div>
+            </div>
+
+            <div className="mode-card hud-frame" onClick={()=>setView("homemode")}>
+              <div className="hud-br"/><div className="hud-bl"/>
+              <div className="card-header">
+                <div className="card-icon-wrap">🏠</div>
+                <span className="card-tag">PROFILE</span>
+              </div>
+              <div className="card-title">HOME MODE</div>
+              <div className="card-desc">Persistent workspace. Saved notes, chat history, streaks and credits.</div>
+              <div className="card-pills">
+                <span className="pill">SAVED NOTES</span>
+                <span className="pill">STREAKS</span>
+                <span className="pill">CREDITS</span>
+              </div>
+              <div className="card-arrow"><IcoArrow/> ENTER</div>
+            </div>
+          </div>
+
+          <div style={{fontFamily:"'Share Tech Mono',monospace",fontSize:".65rem",color:"var(--muted)",letterSpacing:"2px"}}>
+            BUILD 2025.Q2 · QUARTZ LABS · ALL SYSTEMS NOMINAL
+          </div>
+        </div>
+      )}
+
+      {/* ── SCHOOL MODE ──────────────────────────────────────────── */}
+      {view==="school" && (
+        <div className="shell" style={{position:"relative",zIndex:2}}>
+          <aside className="sidebar">
+            <div className="sb-logo" onClick={()=>setView("home")}><div className="sb-gem"/><span className="sb-name">QUARTZ</span></div>
+            <div className="sb-divider"/>
+            <div className="sb-section">SESSION</div>
+            <button className="sb-btn act"><IcoChat/>Active Chat</button>
+            <button className="sb-btn" onClick={()=>setView("viz")}><IcoCube/>Visualizations</button>
+            <button className="sb-btn" onClick={()=>{setMsgs(INIT_MSGS);}}><IcoPlus/>New Session</button>
+            <button className="sb-btn" style={{marginTop:"auto"}} onClick={()=>setView("home")}><IcoX/>Exit Mode</button>
+          </aside>
+
+          <div className="chat-shell">
+            <div className="chat-hdr">
+              <div className="chat-hdr-left">
+                <span className="chat-title">TEMPORARY SESSION</span>
+                <span className="hdr-badge">SCHOOL MODE</span>
+              </div>
+              <div className="hdr-live"><span className="status-dot"/>{timeStr}</div>
+            </div>
+            <div className="chat-msgs">
+              {msgs.map((m,i)=>(
+                <div key={i} className={`msg ${m.role}`}>
+                  <div className={`msg-av ${m.role==="ai"?"ai":"us"}`}>{m.role==="ai"?"QZ":"ME"}</div>
+                  <div className="msg-bub" style={{whiteSpace:"pre-wrap"}}>{m.text}</div>
+                </div>
+              ))}
+              {typing && (
+                <div className="msg ai">
+                  <div className="msg-av ai">QZ</div>
+                  <div className="msg-bub"><div className="typing"><span/><span/><span/></div></div>
+                </div>
+              )}
+              <div ref={msgEnd}/>
+            </div>
+            <div className="chat-inp-wrap">
+              <div className="chat-inp-row">
+                <textarea className="chat-inp" rows={1} placeholder="QUERY QUARTZ AI..."
+                  value={input} onChange={e=>setInput(e.target.value)}
+                  onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send();}}}/>
+                <button className="send-btn" onClick={send}><IcoSend/></button>
+              </div>
+              <p className="inp-hint">⚡ ENTER TO SEND · SHIFT+ENTER FOR NEWLINE · PASTE API KEY TO ACTIVATE AI</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── HOME MODE ────────────────────────────────────────────── */}
+      {view==="homemode" && (
+        <div className="shell" style={{position:"relative",zIndex:2}}>
+          <aside className="sidebar">
+            <div className="sb-logo" onClick={()=>setView("home")}><div className="sb-gem"/><span className="sb-name">QUARTZ</span></div>
+            <div className="sb-divider"/>
+            <div className="sb-section">NAVIGATION</div>
+            <button className={`sb-btn ${hmSub==="dashboard"?"act":""}`} onClick={()=>setHmSub("dashboard")}><IcoDash/>Dashboard</button>
+            <button className={`sb-btn ${hmSub==="notes"?"act":""}`} onClick={()=>setHmSub("notes")}><IcoNote/>Notes</button>
+            <button className={`sb-btn ${hmSub==="chats"?"act":""}`} onClick={()=>setHmSub("chats")}><IcoChat/>Saved Chats</button>
+            <button className="sb-btn" onClick={()=>setView("viz")}><IcoCube/>Visualizations</button>
+            <button className="sb-btn" onClick={()=>setView("school")}><IcoPlus/>New Chat</button>
+            <button className="sb-btn" style={{marginTop:"auto"}} onClick={()=>setView("home")}><IcoX/>Exit Mode</button>
+          </aside>
+
+          <div className="dash">
+            {hmSub==="dashboard" && <>
+              <div className="dash-hdr">
+                <div className="dash-greeting">
+                  <h1>WELCOME BACK</h1>
+                  <p className="typewriter">SYSTEM READY · 4-DAY STREAK ACTIVE · 340 CREDITS REMAINING</p>
+                </div>
+                <div className="dash-time">
+                  <div style={{fontSize:"1.3rem",fontFamily:"'Orbitron',sans-serif",fontWeight:700,color:"var(--cyan)"}}>{timeStr}</div>
+                  <div>{dateStr}</div>
+                </div>
+              </div>
+              <div className="streak-wrap">
+                <div className="streak-label">WEEKLY STREAK ─ 4/7 DAYS</div>
+                <div className="streak-bar">
+                  {[1,1,1,1,0,0,0].map((d,i)=><div key={i} className={`streak-day ${d?"done":""}`}/>)}
+                </div>
+              </div>
+              <div className="stats-row">
+                <div className="stat-card hud-frame"><div className="hud-br"/><div className="hud-bl"/>
+                  <div className="stat-icon flame">🔥</div>
+                  <div className="stat-val" style={{color:"var(--amber)"}}>4</div>
+                  <div className="stat-label">DAY STREAK</div>
+                </div>
+                <div className="stat-card hud-frame"><div className="hud-br"/><div className="hud-bl"/>
+                  <div className="stat-icon star">⭐</div>
+                  <div className="stat-val" style={{color:"var(--green)"}}>12</div>
+                  <div className="stat-label">NOTES SAVED</div>
+                </div>
+                <div className="stat-card hud-frame"><div className="hud-br"/><div className="hud-bl"/>
+                  <div className="stat-icon cred">◆</div>
+                  <div className="stat-val" style={{color:"var(--cyan)"}}>340</div>
+                  <div className="stat-label">CREDITS</div>
+                </div>
+              </div>
+              <div className="sec-hdr"><h3>RECENT NOTES</h3><button onClick={()=>setHmSub("notes")}>VIEW ALL →</button></div>
+              <div className="notes-grid">
+                {NOTES.slice(0,3).map((n,i)=>(
+                  <div key={i} className="note-card hud-frame"><div className="hud-br"/><div className="hud-bl"/>
+                    <span className="note-tag">{n.tag}</span>
+                    <div className="note-title">{n.title}</div>
+                    <div className="note-preview">{n.preview}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="sec-hdr"><h3>RECENT SESSIONS</h3><button onClick={()=>setHmSub("chats")}>VIEW ALL →</button></div>
+              <div className="chat-hist">
+                {CHATS.slice(0,2).map((c,i)=>(
+                  <div key={i} className="ch-item">
+                    <span className="ch-ico"><IcoChat/></span>
+                    <div><div className="ch-title">{c.title}</div><div className="ch-date">{c.date}</div></div>
+                  </div>
+                ))}
+              </div>
+            </>}
+            {hmSub==="notes" && <>
+              <div className="dash-hdr"><div className="dash-greeting"><h1>NOTES ARCHIVE</h1><p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:".7rem",color:"var(--muted)"}}>{NOTES.length} DOCUMENTS STORED</p></div></div>
+              <div className="notes-grid">
+                {NOTES.map((n,i)=>(
+                  <div key={i} className="note-card hud-frame"><div className="hud-br"/><div className="hud-bl"/>
+                    <span className="note-tag">{n.tag}</span>
+                    <div className="note-title">{n.title}</div>
+                    <div className="note-preview">{n.preview}</div>
+                  </div>
+                ))}
+              </div>
+            </>}
+            {hmSub==="chats" && <>
+              <div className="dash-hdr"><div className="dash-greeting"><h1>SESSION LOG</h1><p style={{fontFamily:"'Share Tech Mono',monospace",fontSize:".7rem",color:"var(--muted)"}}>{CHATS.length} SESSIONS ARCHIVED</p></div></div>
+              <div className="chat-hist">
+                {CHATS.map((c,i)=>(
+                  <div key={i} className="ch-item">
+                    <span className="ch-ico"><IcoChat/></span>
+                    <div><div className="ch-title">{c.title}</div><div className="ch-date">{c.date}</div></div>
+                  </div>
+                ))}
+              </div>
+            </>}
+          </div>
+        </div>
+      )}
+
+      {/* ── VISUALIZATIONS ───────────────────────────────────────── */}
+      {view==="viz" && (
+        <div className="viz-shell">
+          <aside className="sidebar">
+            <div className="sb-logo" onClick={()=>setView("home")}><div className="sb-gem"/><span className="sb-name">QUARTZ</span></div>
+            <div className="sb-divider"/>
+            <div className="sb-section">MODULES</div>
+            <button className="sb-btn act"><IcoCube/>3D / 2D Models</button>
+            <button className="sb-btn" onClick={()=>setView("school")}><IcoChat/>School Chat</button>
+            <button className="sb-btn" onClick={()=>setView("homemode")}><IcoDash/>Home Mode</button>
+            <button className="sb-btn" style={{marginTop:"auto"}} onClick={()=>setView("home")}><IcoX/>Exit</button>
+          </aside>
+          <div className="viz-main">
+            <button className="back-btn" onClick={()=>setView("home")}>← BACK TO HUB</button>
+            <h2>INTERACTIVE VISUALIZATIONS</h2>
+            <p>EXPLORE GEOMETRY AND SCIENCE THROUGH LIVE ANIMATED MODELS — ZERO DEPENDENCIES</p>
+            <div className="api-banner">
+              <strong>⚡ API INTEGRATION POINTS</strong><br/>
+              <strong>OpenAI:</strong> In the <code>send()</code> function, replace the <code>setTimeout</code> mock with a <code>fetch</code> to <code>https://api.openai.com/v1/chat/completions</code> — add header <code>Authorization: Bearer YOUR_OPENAI_KEY</code>.<br/><br/>
+              <strong>Napkin AI:</strong> After the OpenAI response, POST the user message to your Napkin API endpoint (from their dashboard). Render the returned SVG inline inside the chat bubble next to the text response.<br/><br/>
+              <strong>Three.js upgrade:</strong> Current visualizations use native 2D Canvas. To upgrade to full WebGL, import Three.js via CDN and replace each <code>*Viz</code> component with a <code>useEffect</code> that initialises a <code>WebGLRenderer</code> scene.
+            </div>
+            <div className="viz-grid">
+              {VIZDATA.map(({title,desc,tag,Comp},i)=>(
+                <div key={i} className="viz-card hud-frame"><div className="hud-br"/><div className="hud-bl"/>
+                  <div className="viz-cv"><Comp/></div>
+                  <span className="viz-tag">{tag}</span>
+                  <div className="viz-title">{title}</div>
+                  <div className="viz-desc">{desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
