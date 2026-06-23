@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quartz School Mode</title>
+  <link rel="stylesheet" href="../css/quartz.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo-shell">
+          <span class="logo-dot"></span>
+        </div>
+        <div>
+          <h1>Quartz</h1>
+          <p>School Mode</p>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="generateNotes">Generate Notes</button>
+        <button id="summarizeNotes">Summarize</button>
+        <label for="fileUpload" class="file-upload-label">📎 Upload Document</label>
+        <input type="file" id="fileUpload" accept=".pdf,.docx,.txt,.doc" style="display: none;" />
+        <button id="clearWorkspace" class="danger">Clear Workspace</button>
+      </div>
+    </header>
+
+    <main class="workspace-shell">
+      <section class="panel editor-panel">
+        <div class="panel-header">
+          <div>
+            <h2>Study Notes</h2>
+            <p>Write or paste chapters, highlight key ideas, and structure your study session.</p>
+          </div>
+          <div id="uploadedFiles" class="uploaded-files-list"></div>
+          <span class="badge warning">Warning: Closing or refreshing this tab will permanently erase all temporary chats and notes.</span>
+        </div>
+
+        <div id="noteEditor" class="note-editor" contenteditable="true" spellcheck="true" aria-label="Study notes editor">
+          <h2>Welcome to Quartz School Mode</h2>
+          <p>Use headings, lists, and highlights to capture your study material.</p>
+          <p>Try typing a chapter summary or pasting lesson notes.</p>
+        </div>
+      </section>
+
+      <div class="splitter" id="splitter" aria-hidden="true"></div>
+
+      <section class="panel chat-panel">
+        <div class="panel-header">
+          <div>
+            <h2>AI Study Assistant</h2>
+            <p>Ask questions, generate quiz material, and learn faster.</p>
+          </div>
+        </div>
+
+        <div class="chat-window" id="chatWindow" aria-live="polite">
+          <div class="chat-bubble assistant">
+            <span class="speaker">Assistant</span>
+            <p>Hi there! Type a question and I’ll help you study with summaries, explanations, and flashcards.</p>
+          </div>
+        </div>
+
+        <form id="chatForm" class="chat-form">
+          <input type="text" id="chatInput" placeholder="Ask about your notes or request a summary..." autoComplete="off" aria-label="Type your question here" />
+          <button type="submit" id="sendButton">Send</button>                                                                             
+        </form>
+      </section>
+    </main>     
+
+
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+  <script src="../js/quartz.js"></script>
+</body>
+</html>
