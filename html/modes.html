@@ -3,28 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modes</title>
+    <title>Choose Your Mode - Quartz | AI Study Companion</title>
     <link rel="stylesheet" href="../css/modes.css">
 </head>
 <body>
-    <nav class="navbar" aria-label="Main navigation">
-        <a href="index.html">Home</a>
-        <a href="modes.html" aria-current="page">Modes</a>
-        <a href="">Pricing</a>
-        <a href="">Contact</a>
-    </nav>
+    <div class="background-glow"></div>
     
+    <div class="container">
+        <header class="header">
+            <div class="logo-section">
+                <div class="logo">Q</div>
+                <h1 class="brand-title">QUARTZ</h1>
+            </div>
+        </header>
 
-    <h1>Study Modes</h1>
-    <p id="pmi">Quartz adapts to different learning environments with flexible study modes designed for both focused home learning and quick classroom access.</p>
-    <div class="modes-row">
-        <p id="pm">Home Mode provides a personalized AI-powered workspace where students can save chats, organize notes, track streaks, and access long-term learning tools through their account.
-Users are required to sign in to access and save their progress.</p>
+        <section class="title-section">
+            <h2 class="main-title">Choose Your Mode</h2>
+            <p class="subtitle">Select the workspace that fits your learning style.</p>
+        </section>
 
-        <img src="https://i.ibb.co/VWDt8KLQ/IMG-1900.jpg" alt="IMG-1900" width="300" length="300">
+        <section class="modes-container">
+            <!-- Home Mode Card -->
+            <div class="mode-card home-mode">
+                <div class="card-glow home-glow"></div>
+                <div class="card-content">
+                    <div class="mode-icon home-icon">
+                        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M32 4L8 24V56H32V36H32V56H56V24L32 4Z"/>
+                            <circle cx="24" cy="36" r="4" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <h3 class="mode-title">Home Mode</h3>
+                    <div class="mode-description">
+                        <ul class="features-list">
+                            <li><span class="feature-icon">✓</span><span>Save notes permanently</span></li>
+                            <li><span class="feature-icon">✓</span><span>Save AI chats</span></li>
+                            <li><span class="feature-icon">✓</span><span>Personal workspace</span></li>
+                            <li><span class="feature-icon">✓</span><span>Track streaks & progress</span></li>
+                            <li><span class="feature-icon">🔐</span><span>Requires login</span></li>
+                        </ul>
+                    </div>
+                    <a href="home.html" class="mode-button home-button">
+                        <span>Enter Home Mode</span>
+                        <span class="button-arrow">→</span>
+                    </a>
+                </div>
+                <div class="card-border"></div>
+            </div>
 
-        <p id="pm2">School Mode offers fast temporary access for students who need quick studying during class without creating an account or signing in.
-Warning: Closing the tab or refreshing the page will permanently erase temporary chats and study progress.</p>
+            <!-- School Mode Card -->
+            <div class="mode-card school-mode">
+                <div class="card-glow school-glow"></div>
+                <div class="card-content">
+                    <div class="mode-icon school-icon">
+                        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M32 8L8 20V32H8V44C8 48 12 52 32 52C52 52 56 48 56 44V32H56V20L32 8Z"/>
+                            <path d="M20 32L32 40L44 32"/>
+                            <circle cx="32" cy="20" r="3" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <h3 class="mode-title">School Mode</h3>
+                    <div class="mode-description">
+                        <ul class="features-list">
+                            <li><span class="feature-icon">✓</span><span>No login required</span></li>
+                            <li><span class="feature-icon">✓</span><span>Instant access</span></li>
+                            <li><span class="feature-icon">✓</span><span>Temporary workspace</span></li>
+                            <li><span class="feature-icon">✓</span><span>Perfect for classrooms</span></li>
+                            <li><span class="feature-icon">⏱️</span><span>Auto-delete on tab close</span></li>
+                        </ul>
+                    </div>
+                    <a href="quartz.html" class="mode-button school-button">
+                        <span>Enter School Mode</span>
+                        <span class="button-arrow">→</span>
+                    </a>
+                </div>
+                <div class="card-border"></div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p class="footer-text">Made for Students. Built by Students.</p>
+            <div class="footer-details">
+                <span>© 2024 Quartz. All rights reserved.</span>
+            </div>
+        </footer>
     </div>
+
+    <script src="../js/modes.js"></script>
 </body>
 </html>
