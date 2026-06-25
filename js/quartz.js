@@ -1,4 +1,4 @@
-const noteEditor = document.getElementById('noteEditor');
+dconst noteEditor = document.getElementById('noteEditor');
 const chatForm = document.getElementById('chatForm');
 const chatInput = document.getElementById('chatInput');
 const chatWindow = document.getElementById('chatWindow');
