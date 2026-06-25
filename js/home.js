@@ -7,8 +7,8 @@
 // Supabase Configuration
 // ========================================
 
-const SUPABASE_URL = "https://gnslhfxlonwgmygbgxnm.supabase.co/rest/v1/";
-const SUPABASE_KEY = "sb_publishable_KrobyiUvCDgjPbb9m-BNfA_H1j7jHUh";
+const SUPABASE_URL = "https://gnslhfxlonwgmygbgxnm.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imduc2xoZnhsb253Z215Z2JneG5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyMDM5MjYsImV4cCI6MjA5Nzc3OTkyNn0.y96BrMK-gPnKyJzfsFMpSCL2MoOdxHDBjl4_NJqCqMQ";
 
 let supabase = null;
 let currentUser = null;
