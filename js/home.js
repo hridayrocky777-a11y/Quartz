@@ -3,23 +3,7 @@
    Interactive Features & Functionality
    ======================================== */
 
-// ========================================
-// Supabase Configuration
-// ========================================
-
-const SUPABASE_URL = "https://gnslhfxlonwgmygbgxnm.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imduc2xoZnhsb253Z215Z2JneG5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyMDM5MjYsImV4cCI6MjA5Nzc3OTkyNn0.y96BrMK-gPnKyJzfsFMpSCL2MoOdxHDBjl4_NJqCqMQ";
-
-let supabase = null;
-let currentUser = null;
-
-/**
- * Initialize Supabase client
- */
-function initializeSupabase() {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    console.log('Supabase initialized');
-}
+// Supabase and login removed — app opens directly to Home
 
 // ========================================
 // DOM Elements
@@ -190,6 +174,8 @@ buttons.forEach(button => {
             setTimeout(() => {
                 console.log('Navigate to notes');
             }, 1000);
+        } else if (text === 'New Chat') {
+            showWorkspace();
         }
     });
 });
@@ -514,235 +500,7 @@ function initializeApp() {
     console.log('⚡ Interactive elements active');
 }
 
-// ========================================
-// ========================================
-// Login Modal Functionality - Supabase Auth
-// ========================================
-
-/**
- * Check if user is logged in and initialize accordingly
- */
-async function initializeLoginModal() {
-    try {
-        // Get current authenticated user
-        const { data: { user } } = await supabase.auth.getUser();
-
-        if (user) {
-            // User is logged in
-            currentUser = user;
-            hideLoginModal();
-            showDashboard();
-            updateUserProfile(user);
-            console.log('User logged in:', user.email);
-        } else {
-            // User is not logged in
-            showLoginModal();
-            hideDashboard();
-        }
-    } catch (error) {
-        console.error('Error checking authentication:', error);
-        showLoginModal();
-        hideDashboard();
-    }
-}
-
-/**
- * Show login modal
- */
-function showLoginModal() {
-    const loginModal = document.getElementById('loginModal');
-    const container = document.querySelector('.container');
-    if (loginModal) loginModal.classList.remove('hidden');
-    if (container) container.style.display = 'none';
-}
-
-/**
- * Hide login modal
- */
-function hideLoginModal() {
-    const loginModal = document.getElementById('loginModal');
-    if (loginModal) loginModal.classList.add('hidden');
-}
-
-/**
- * Show dashboard
- */
-function showDashboard() {
-    const container = document.querySelector('.container');
-    if (container) container.style.display = 'flex';
-}
-
-/**
- * Hide dashboard
- */
-function hideDashboard() {
-    const container = document.querySelector('.container');
-    if (container) container.style.display = 'none';
-}
-
-/**
- * Handle Google Login with Supabase
- */
-async function loginWithGoogle() {
-    const googleBtn = document.getElementById('googleLoginBtn');
-    const originalText = googleBtn.innerHTML;
-
-    try {
-        // Show loading state
-        googleBtn.innerHTML = '<span style="display: inline-block; animation: spin 1s linear infinite;">⏳</span> Signing in...';
-        googleBtn.disabled = true;
-
-        // Sign in with Google using Supabase
-        const { data, error } = await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: window.location.origin + '/html/home.html'
-            }
-        });
-
-        if (error) {
-            console.error('Google login error:', error);
-            showNotification('Login failed. Please try again.', 'error');
-            googleBtn.innerHTML = originalText;
-            googleBtn.disabled = false;
-            return;
-        }
-
-        console.log('Google sign-in initiated');
-        // Supabase will redirect to Google, then back to your app
-    } catch (error) {
-        console.error('Login error:', error);
-        showNotification('An error occurred. Please try again.', 'error');
-        googleBtn.innerHTML = originalText;
-        googleBtn.disabled = false;
-    }
-}
-
-/**
- * Update user profile in UI after successful login
- */
-function updateUserProfile(user) {
-    if (!user) return;
-
-    // Get user metadata
-    const userName = user.user_metadata?.full_name || 'Student';
-    const userEmail = user.email || '';
-    const avatarUrl = user.user_metadata?.avatar_url || '';
-
-    // Update account card information
-    const accountName = document.querySelector('.account-name');
-    const accountEmail = document.querySelector('.account-email');
-    const accountAvatar = document.querySelector('.account-avatar');
-
-    if (accountName) accountName.textContent = userName;
-    if (accountEmail) accountEmail.textContent = userEmail;
-    if (avatarUrl && accountAvatar) {
-        accountAvatar.style.backgroundImage = `url('${avatarUrl}')`;
-        accountAvatar.style.backgroundSize = 'cover';
-        accountAvatar.style.backgroundPosition = 'center';
-    }
-
-    console.log('Profile updated:', { userName, userEmail });
-    showNotification(`Welcome back, ${userName}! 🎓`, 'success');
-}
-
-/**
- * Logout user
- */
-async function logout() {
-    try {
-        // Show loading state
-        const logoutBtn = document.querySelector('.account-logout');
-        if (logoutBtn) {
-            const originalText = logoutBtn.textContent;
-            logoutBtn.textContent = 'Logging out...';
-            logoutBtn.disabled = true;
-        }
-
-        // Sign out from Supabase
-        const { error } = await supabase.auth.signOut();
-
-        if (error) {
-            console.error('Logout error:', error);
-            showNotification('Logout failed. Please try again.', 'error');
-            return;
-        }
-
-        // Clear current user
-        currentUser = null;
-
-        // Show login modal
-        showLoginModal();
-        hideDashboard();
-
-        showNotification('Logged out successfully', 'success');
-        console.log('User logged out');
-    } catch (error) {
-        console.error('Logout error:', error);
-        showNotification('An error occurred during logout.', 'error');
-    }
-}
-
-/**
- * Set up authentication event listeners
- */
-function setupAuthListeners() {
-    const googleLoginBtn = document.getElementById('googleLoginBtn');
-    const closeBtn = document.querySelector('.close-btn');
-    const logoutBtn = document.querySelector('.account-logout');
-    const signupLink = document.querySelector('.signup-link');
-
-    // Google login button
-    if (googleLoginBtn) {
-        googleLoginBtn.addEventListener('click', loginWithGoogle);
-    }
-
-    // Close button - inform user login is required
-    if (closeBtn) {
-        closeBtn.addEventListener('click', () => {
-            showNotification('You need to log in to access Quartz', 'info');
-        });
-    }
-
-    // Logout button
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', logout);
-    }
-
-    // Sign up link - redirect to Supabase signup or your signup page
-    if (signupLink) {
-        signupLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            showNotification('Redirecting to sign up...', 'success');
-            // You can redirect to a signup page here
-            // window.location.href = '/signup.html';
-        });
-    }
-}
-
-/**
- * Monitor authentication state changes
- */
-function monitorAuthState() {
-    supabase.auth.onAuthStateChange((event, session) => {
-        if (event === 'SIGNED_IN') {
-            console.log('User signed in');
-            currentUser = session.user;
-            hideLoginModal();
-            showDashboard();
-            updateUserProfile(session.user);
-        } else if (event === 'SIGNED_OUT') {
-            console.log('User signed out');
-            currentUser = null;
-            showLoginModal();
-            hideDashboard();
-        } else if (event === 'USER_UPDATED') {
-            console.log('User updated');
-            currentUser = session.user;
-            updateUserProfile(session.user);
-        }
-    });
-}
+// Login and auth logic removed — app shows Home directly
 
 
 // ========================================
@@ -751,18 +509,10 @@ function monitorAuthState() {
 
 // Initialize on DOM ready
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', async () => {
-        initializeSupabase();
-        await initializeLoginModal();
-        setupAuthListeners();
-        monitorAuthState();
+    document.addEventListener('DOMContentLoaded', () => {
         initializeApp();
     });
 } else {
-    initializeSupabase();
-    initializeLoginModal();
-    setupAuthListeners();
-    monitorAuthState();
     initializeApp();
 }
 

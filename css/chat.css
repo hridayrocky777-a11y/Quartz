@@ -1,0 +1,47 @@
+/* Reuse Quartz variables by importing or redefining minimal set */
+:root{
+  --primary-dark:#000000;
+  --text-primary:#ffffff;
+  --text-secondary:rgba(255,255,255,0.7);
+  --accent-blue:#00d4ff;
+  --gradient-blue:linear-gradient(135deg,#00d4ff,#0090ff);
+  --radius-lg:1rem;
+  --spacing-md:1rem;
+  --transition-normal:0.3s ease-in-out;
+  --glow-blue:0 0 20px rgba(0,212,255,0.3);
+}
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial; background:linear-gradient(135deg,#000,#07071a); color:var(--text-primary); margin:0;}
+.navbar{position:fixed;top:0;left:0;right:0;height:70px;display:flex;align-items:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);border-bottom:1px solid rgba(0,212,255,0.06);z-index:60}
+.nav-container{max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;justify-content:space-between;align-items:center}
+.logo{width:40px;height:40px;border-radius:8px;background:var(--gradient-blue);display:flex;align-items:center;justify-content:center;font-weight:700;color:#001}
+.brand-text{margin-left:.5rem;background:var(--gradient-blue);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.btn{padding:.5rem 1rem;border-radius:999px;border:none;cursor:pointer;font-weight:600}
+.btn-secondary{background:rgba(255,255,255,0.04);color:var(--accent-blue);border:1px solid rgba(0,212,255,0.12)}
+.btn-primary{background:var(--gradient-blue);color:#001;box-shadow:var(--glow-blue)}
+.workspace-page{padding-top:90px;max-width:1200px;margin:0 auto;padding-left:1rem;padding-right:1rem}
+.workspace-shell{display:grid;grid-template-columns:1fr 1fr;gap:1rem;min-height:calc(100vh - 140px)}
+.panel{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:var(--radius-lg);padding:1rem;display:flex;flex-direction:column}
+.panel-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem}
+.toolbar{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.5rem}
+.toolbar-btn{background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.12);padding:.4rem .7rem;border-radius:999px;color:var(--text-primary);cursor:pointer}
+.notes-editor{flex:1;min-height:420px;padding:1rem;border-radius:.6rem;background:rgba(0,0,0,0.18);outline:none;overflow:auto}
+.notes-editor:empty::before{content:attr(data-placeholder);color:var(--text-secondary)}
+.chat-messages{flex:1;display:flex;flex-direction:column;gap:.75rem;overflow:auto;padding-right:.5rem}
+.message-row{display:flex}
+.message-row.user{justify-content:flex-end}
+.message-bubble{max-width:85%;padding:.8rem 1rem;border-radius:12px;white-space:pre-wrap}
+.message-row.ai .message-bubble{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08)}
+.message-row.user .message-bubble{background:linear-gradient(135deg,rgba(0,212,255,0.18),rgba(184,85,255,0.14));border:1px solid rgba(0,212,255,0.18)}
+.message-meta{display:flex;justify-content:space-between;align-items:center;font-size:.78rem;color:var(--text-secondary);margin-bottom:.35rem}
+.copy-btn{background:transparent;border:none;color:var(--accent-blue);cursor:pointer}
+.message-bubble pre{background:rgba(0,0,0,0.35);padding:.6rem;border-radius:.6rem;overflow:auto}
+.typing-indicator{display:flex;gap:.2rem;margin-bottom:.5rem}
+.typing-indicator span{width:8px;height:8px;border-radius:50%;background:var(--accent-blue);animation:pulse 1.2s infinite}
+@keyframes pulse{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-4px);opacity:1}}
+.api-key-row{margin-bottom:.6rem}
+.api-key-input{width:100%;padding:.7rem .9rem;border-radius:999px;border:1px solid rgba(0,212,255,0.12);background:rgba(0,0,0,0.22);color:var(--text-primary)}
+.composer{display:flex;gap:.6rem;align-items:flex-end}
+.chat-input{flex:1;min-height:48px;max-height:200px;padding:.8rem 1rem;border-radius:999px;background:rgba(0,0,0,0.2);border:1px solid rgba(0,212,255,0.08);resize:none;color:var(--text-primary)}
+.send-btn{padding:.6rem 1rem;border-radius:999px;background:var(--gradient-blue);border:none;color:#001;font-weight:700;cursor:pointer}
+@media(max-width:900px){.workspace-shell{grid-template-columns:1fr;min-height:auto}.notes-editor{min-height:320px}}

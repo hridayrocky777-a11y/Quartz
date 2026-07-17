@@ -30,9 +30,7 @@ logDebug('DOM Status - chatWindow: ' + !!chatWindow + ', chatForm: ' + !!chatFor
 const BACKEND_URL = 'http://localhost:3000';
 
 // ========== Supabase Configuration ==========
-const SUPABASE_URL = 'https://lLsCS9tt2gC1JejyIAj9YA.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_lLsCS9tt2gC1JejyIAj9YA__Ff4yMg4';
-const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
 
 if (!supabaseClient) {
   console.warn('Supabase client not initialized. Make sure the CDN script is loaded and SUPABASE_URL is configured.');
