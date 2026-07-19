@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backpack | Quartz</title>
+    <link rel="stylesheet" href="../css/backpack.css">
+</head>
+<body>
+    <div class="page-shell">
+        <header class="backpack-header">
+            <div class="header-copy">
+                <a href="home.html" class="back-link">← Quartz Home</a>
+                <p class="eyebrow">Personal study vault</p>
+                <h1>📚 Backpack</h1>
+                <p class="subtitle">Your personal digital library.</p>
+            </div>
+            <div class="header-actions">
+                <div class="storage-card">
+                    <div class="storage-meta">
+                        <span>Current Storage</span>
+                        <strong id="storageSummary">0 / 250 Books</strong>
+                    </div>
+                    <div class="storage-bar" aria-hidden="true">
+                        <div id="storageFill" class="storage-fill"></div>
+                    </div>
+                </div>
+                <button id="themeToggleBtn" class="icon-btn theme-toggle-btn" type="button" aria-label="Switch to light mode" title="Switch to light mode">☀️</button>
+                <button id="addBookBtn" class="add-book-btn" type="button" aria-label="Add books" title="Add Books">
+                    <span>+</span>
+                </button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="utility-bar">
+                <div class="storage-pill">
+                    <span class="pill-dot"></span>
+                    <span id="storageMessage">Books Used 0 / 250</span>
+                </div>
+                <div class="utility-actions">
+                    <button class="ghost-btn" type="button">AI Spotlight</button>
+                    <button class="ghost-btn" type="button">Smart Sort</button>
+                </div>
+            </section>
+
+            <section id="emptyState" class="empty-state" hidden>
+                <div class="empty-illustration">📚</div>
+                <h2>No books in your Backpack yet.</h2>
+                <p>Upload your first study book and turn every chapter into a future-ready learning asset.</p>
+                <button id="emptyUploadBtn" class="primary-btn" type="button">Upload Your First Book</button>
+            </section>
+
+            <section id="libraryGrid" class="library-grid" aria-label="Backpack library"></section>
+        </main>
+    </div>
+
+    <div id="uploadModal" class="modal hidden" aria-hidden="true">
+        <div class="modal-backdrop" data-close-modal></div>
+        <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="uploadModalTitle">
+            <button class="modal-close" type="button" data-close-modal aria-label="Close upload modal">×</button>
+            <div class="modal-header">
+                <p class="eyebrow">Secure upload</p>
+                <h2 id="uploadModalTitle">Add books to your library</h2>
+                <p>Bring in PDFs, EPUBs, and DOCX files with a premium drag-and-drop experience.</p>
+            </div>
+
+            <div id="uploadDropzone" class="upload-dropzone">
+                <input id="fileInput" type="file" accept=".pdf,.epub,.docx,application/pdf,application/epub+zip,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+                <div class="dropzone-icon">☁️</div>
+                <h3>Drop your files here</h3>
+                <p>or click to browse from your device</p>
+                <button id="browseBtn" class="primary-btn" type="button">Browse Files</button>
+            </div>
+
+            <div id="previewPanel" class="preview-panel hidden">
+                <div class="preview-cover" id="previewCover">📖</div>
+                <div class="preview-details">
+                    <h3 id="previewName">Book Name</h3>
+                    <p id="previewMeta">File size • pages</p>
+                    <div class="progress-block">
+                        <div class="progress-labels">
+                            <span>Upload Progress</span>
+                            <span id="progressText">0%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div id="progressBar" class="progress-bar"></div>
+                        </div>
+                    </div>
+                </div>
+                <button id="uploadBookBtn" class="primary-btn" type="button">Upload Book</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="readerModal" class="reader-modal hidden" aria-hidden="true">
+        <div class="reader-backdrop" data-close-reader></div>
+        <div class="reader-card" role="dialog" aria-modal="true" aria-labelledby="readerTitle">
+            <div class="reader-toolbar">
+                <div>
+                    <p class="eyebrow">Reading mode</p>
+                    <h2 id="readerTitle">Book Title</h2>
+                </div>
+                <div class="reader-controls">
+                    <button class="icon-btn" data-reader-action="zoom-out" type="button">−</button>
+                    <button class="icon-btn" data-reader-action="zoom-in" type="button">+</button>
+                    <button class="icon-btn" data-reader-action="search" type="button">🔎</button>
+                    <button class="icon-btn" data-reader-action="fullscreen" type="button">⛶</button>
+                    <button class="icon-btn" data-reader-action="bookmark" type="button">🔖</button>
+                    <button class="icon-btn close-reader" data-close-reader type="button">×</button>
+                </div>
+            </div>
+
+            <div class="reader-body">
+                <div class="reader-sidebar">
+                    <div class="reader-panel">
+                        <h3>Reading Flow</h3>
+                        <p>Page 2 of 12</p>
+                        <div class="progress-track compact">
+                            <div class="progress-bar"></div>
+                        </div>
+                    </div>
+                    <div class="reader-panel">
+                        <h3>AI Companion</h3>
+                        <p>Future highlights, flashcards, and smart notes will appear here.</p>
+                    </div>
+                </div>
+                <div class="reader-content">
+                    <div class="reader-page">
+                        <h3>Chapter Overview</h3>
+                        <p id="readerExcerpt">The latest chapter is ready for your next study sprint. Use this space for future AI-enhanced summaries, notes, and voice-guided revision.</p>
+                    </div>
+                    <div class="reader-footer">
+                        <button class="ghost-btn" type="button">Previous</button>
+                        <button class="ghost-btn" type="button">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/backpack.js" defer></script>
+</body>
+</html>

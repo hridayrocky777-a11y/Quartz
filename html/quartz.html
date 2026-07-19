@@ -5,9 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quartz School Mode</title>
   <link rel="stylesheet" href="../css/quartz.css" />
+  <link rel="stylesheet" href="../css/academic-profile.css" />
 </head>
 <body>
   <div class="page-shell">
+    <button id="academicProfileButton" class="academic-profile-trigger" type="button" aria-haspopup="dialog" aria-controls="academicProfileModal">
+      <span class="trigger-icon">📚</span>
+      <span id="academicProfileButtonLabel">📚 Select Class</span>
+    </button>
+
     <header class="topbar">
       <div class="brand">
         <div class="logo-shell">
@@ -72,8 +78,44 @@
 
   </div>
 
+  <div id="academicProfileModal" class="academic-profile-modal" aria-hidden="true" role="dialog" aria-labelledby="academicProfileTitle">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card">
+      <button class="modal-close" type="button" aria-label="Close academic profile">×</button>
+      <div class="modal-header">
+        <p class="eyebrow">Quartz onboarding</p>
+        <h2 id="academicProfileTitle">Let's personalize your Quartz experience.</h2>
+        <p class="modal-subtitle">Shape your learning environment around the class and board that fits you best.</p>
+      </div>
+
+      <div class="modal-body">
+        <section class="step-group">
+          <div class="step-label-row">
+            <span class="step-pill">Step 1</span>
+            <h3>Choose Your Class</h3>
+          </div>
+          <div id="classOptions" class="option-grid" aria-label="Class options"></div>
+        </section>
+
+        <section class="step-group">
+          <div class="step-label-row">
+            <span class="step-pill">Step 2</span>
+            <h3>Choose Your Board</h3>
+          </div>
+          <div id="boardOptions" class="board-grid" aria-label="Board options"></div>
+        </section>
+      </div>
+
+      <div class="modal-actions">
+        <button id="saveAcademicProfile" class="save-profile-btn" type="button">Save Academic Profile</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="academicToast" class="academic-toast" role="status" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js"></script>
+  <script src="../js/academic-profile.js"></script>
   <script src="../js/quartz.js"></script>
 </body>
 </html>

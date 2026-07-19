@@ -450,11 +450,36 @@ logoutBtn?.addEventListener('click', () => {
 /**
  * Handle theme toggle
  */
-const themeToggle = document.querySelector('.icon-btn');
+const themeToggle = document.querySelector('.theme-toggle-btn');
+let isLightTheme = false;
+
+function applyTheme(theme) {
+    document.body.classList.toggle('light-theme', theme === 'light');
+    document.body.classList.toggle('dark-theme', theme === 'dark');
+    if (themeToggle) {
+        themeToggle.setAttribute('aria-label', theme === 'light' ? 'Switch to normal mode' : 'Switch to light mode');
+        themeToggle.title = theme === 'light' ? 'Switch to normal mode' : 'Switch to light mode';
+        themeToggle.innerHTML = theme === 'light'
+            ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>'
+            : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"></path></svg>';
+    }
+}
+
 themeToggle?.addEventListener('click', () => {
-    document.body.classList.toggle('dark-theme');
-    showNotification('Theme changed', 'default');
+    isLightTheme = !isLightTheme;
+    const nextTheme = isLightTheme ? 'light' : 'dark';
+    applyTheme(nextTheme);
+    localStorage.setItem('quartz-theme', nextTheme);
+    showNotification(nextTheme === 'light' ? 'Light mode enabled' : 'Normal mode restored', 'default');
 });
+
+const savedTheme = localStorage.getItem('quartz-theme');
+if (savedTheme === 'light') {
+    isLightTheme = true;
+    applyTheme('light');
+} else {
+    applyTheme('dark');
+}
 
 // ========================================
 // Keyboard Shortcuts

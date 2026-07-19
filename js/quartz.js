@@ -1,4 +1,4 @@
-dconst noteEditor = document.getElementById('noteEditor');
+const noteEditor = document.getElementById('noteEditor');
 const chatForm = document.getElementById('chatForm');
 const chatInput = document.getElementById('chatInput');
 const chatWindow = document.getElementById('chatWindow');
@@ -9,6 +9,15 @@ const splitter = document.getElementById('splitter');
 const leftPanel = document.querySelector('.editor-panel');
 const fileUpload = document.getElementById('fileUpload');
 const uploadedFilesList = document.getElementById('uploadedFiles');
+const academicProfileButton = document.getElementById('academicProfileButton');
+const academicProfileButtonLabel = document.getElementById('academicProfileButtonLabel');
+const academicProfileModal = document.getElementById('academicProfileModal');
+const academicProfileCloseButton = academicProfileModal?.querySelector('.modal-close');
+const academicProfileBackdrop = academicProfileModal?.querySelector('.modal-backdrop');
+const classOptionsContainer = document.getElementById('classOptions');
+const boardOptionsContainer = document.getElementById('boardOptions');
+const saveAcademicProfileButton = document.getElementById('saveAcademicProfile');
+const academicToast = document.getElementById('academicToast');
 
 // ========== DEBUG LOGGING ==========
 const LOG_ENABLED = true;
@@ -32,12 +41,137 @@ const BACKEND_URL = 'http://localhost:3000';
 // ========== Supabase Configuration ==========
 
 
-if (!supabaseClient) {
+if (typeof window.supabase === 'undefined') {
   console.warn('Supabase client not initialized. Make sure the CDN script is loaded and SUPABASE_URL is configured.');
 }
 
 // Store uploaded documents for context
 let uploadedDocuments = [];
+
+const academicProfileState = {
+  selectedClass: null,
+  selectedBoard: null,
+};
+
+function getStoredProfile() {
+  return AcademicProfile.readProfile(window.localStorage);
+}
+
+function renderProfileButton(profile) {
+  if (!academicProfileButtonLabel) return;
+  academicProfileButtonLabel.textContent = AcademicProfile.getButtonLabel(profile);
+}
+
+function showToast(message) {
+  if (!academicToast) return;
+  academicToast.textContent = message;
+  academicToast.classList.add('is-visible');
+  window.clearTimeout(showToast.timeoutId);
+  showToast.timeoutId = window.setTimeout(() => {
+    academicToast.classList.remove('is-visible');
+  }, 2200);
+}
+
+function canDismissAcademicProfileModal() {
+  const storedProfile = getStoredProfile();
+  const hasSavedProfile = Boolean(storedProfile.class && storedProfile.board);
+  const selectionComplete = Boolean(academicProfileState.selectedClass && academicProfileState.selectedBoard);
+  return hasSavedProfile || selectionComplete;
+}
+
+function closeAcademicProfileModal() {
+  if (!academicProfileModal) return;
+  if (!canDismissAcademicProfileModal()) {
+    showToast('Please choose your class and board to continue.');
+    return;
+  }
+  academicProfileModal.classList.remove('is-open');
+  academicProfileModal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('modal-open');
+}
+
+function openAcademicProfileModal(force = false) {
+  if (!academicProfileModal) return;
+  const profile = getStoredProfile();
+  if (!force && profile.class && profile.board) {
+    academicProfileState.selectedClass = profile.class;
+    academicProfileState.selectedBoard = profile.board;
+  }
+  populateAcademicProfileOptions(profile);
+  academicProfileModal.classList.add('is-open');
+  academicProfileModal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('modal-open');
+}
+
+function populateAcademicProfileOptions(profile = getStoredProfile()) {
+  const normalizedProfile = AcademicProfile.normalizeProfile(profile);
+  academicProfileState.selectedClass = normalizedProfile.class || academicProfileState.selectedClass;
+  academicProfileState.selectedBoard = normalizedProfile.board || academicProfileState.selectedBoard;
+
+  if (classOptionsContainer) {
+    classOptionsContainer.innerHTML = AcademicProfile.CLASSES.map((classValue) => {
+      const selected = academicProfileState.selectedClass === classValue ? 'is-selected' : '';
+      return `<button class="option-chip ${selected}" type="button" data-class="${classValue}">${AcademicProfile.getClassLabel(classValue)}</button>`;
+    }).join('');
+  }
+
+  if (boardOptionsContainer) {
+    boardOptionsContainer.innerHTML = AcademicProfile.BOARDS.map((board) => {
+      const selected = academicProfileState.selectedBoard === board ? 'is-selected' : '';
+      return `<button class="board-card ${selected}" type="button" data-board="${board}">${board}</button>`;
+    }).join('');
+  }
+}
+
+function attachAcademicProfileEvents() {
+  academicProfileButton?.addEventListener('click', () => {
+    openAcademicProfileModal(true);
+  });
+
+  academicProfileCloseButton?.addEventListener('click', closeAcademicProfileModal);
+  academicProfileBackdrop?.addEventListener('click', closeAcademicProfileModal);
+
+  classOptionsContainer?.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-class]');
+    if (!button) return;
+    academicProfileState.selectedClass = button.getAttribute('data-class');
+    populateAcademicProfileOptions({ class: academicProfileState.selectedClass, board: academicProfileState.selectedBoard });
+  });
+
+  boardOptionsContainer?.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-board]');
+    if (!button) return;
+    academicProfileState.selectedBoard = button.getAttribute('data-board');
+    populateAcademicProfileOptions({ class: academicProfileState.selectedClass, board: academicProfileState.selectedBoard });
+  });
+
+  saveAcademicProfileButton?.addEventListener('click', () => {
+    const profile = {
+      class: academicProfileState.selectedClass,
+      board: academicProfileState.selectedBoard,
+    };
+
+    if (!profile.class || !profile.board) {
+      showToast('Please choose your class and board before saving.');
+      return;
+    }
+
+    AcademicProfile.writeProfile(profile);
+    renderProfileButton(profile);
+    closeAcademicProfileModal();
+    showToast('Academic profile updated successfully.');
+  });
+}
+
+function initializeAcademicProfile() {
+  const profile = getStoredProfile();
+  renderProfileButton(profile);
+  attachAcademicProfileEvents();
+
+  if (!profile.class || !profile.board) {
+    openAcademicProfileModal(true);
+  }
+}
 
 const aiResponses = [
   'I can help turn your notes into a concise summary or explain any concept in a simple way.',
@@ -149,7 +283,8 @@ function createAssistantReply(prompt) {
 }
 
 // ========== File upload handler ==========
-fileUpload.addEventListener('change', async (event) => {
+if (fileUpload) {
+  fileUpload.addEventListener('change', async (event) => {
   const files = Array.from(event.target.files || []);
 
   for (let file of files) {
@@ -173,8 +308,9 @@ fileUpload.addEventListener('change', async (event) => {
     });
   }
 
-  updateUploadedFilesList();
-});
+    updateUploadedFilesList();
+  });
+}
 
 function updateUploadedFilesList() {
   uploadedFilesList.innerHTML = uploadedDocuments
@@ -191,6 +327,9 @@ function removeFile(index) {
   uploadedDocuments.splice(index, 1);
   updateUploadedFilesList();
 }
+
+// ========== Academic Profile Initialization ==========
+initializeAcademicProfile();
 
 // ========== Chat Form Handler with Stub ==========
 if (chatForm) {
