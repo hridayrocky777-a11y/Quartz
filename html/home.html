@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Quartz | Your AI Study Companion</title>
+    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="../css/academic-profile.css">
+</head>
+<body>
+    <button id="academicProfileButton" class="academic-profile-trigger" type="button" aria-haspopup="dialog" aria-controls="academicProfileModal">
+        <span class="trigger-icon">📚</span>
+        <span id="academicProfileButtonLabel">📚 Select Class</span>
+    </button>
+
+    <div id="academicProfileModal" class="academic-profile-modal" aria-hidden="true" role="dialog" aria-labelledby="academicProfileTitle">
+        <div class="modal-backdrop"></div>
+        <div class="modal-card">
+            <button class="modal-close" type="button" aria-label="Close academic profile">×</button>
+            <div class="modal-header">
+                <p class="eyebrow">Quartz onboarding</p>
+                <h2 id="academicProfileTitle">Let's personalize your Quartz experience.</h2>
+                <p class="modal-subtitle">Shape your learning environment around the class and board that fits you best.</p>
+            </div>
+            <div class="modal-body">
+                <section class="step-group">
+                    <div class="step-label-row">
+                        <span class="step-pill">Step 1</span>
+                        <h3>Choose Your Class</h3>
+                    </div>
+                    <div id="classOptions" class="option-grid"></div>
+                </section>
+                <section class="step-group">
+                    <div class="step-label-row">
+                        <span class="step-pill">Step 2</span>
+                        <h3>Choose Your Board</h3>
+                    </div>
+                    <div id="boardOptions" class="board-grid"></div>
+                </section>
+            </div>
+            <div class="modal-actions">
+                <button id="saveAcademicProfile" class="save-profile-btn" type="button">Save Academic Profile</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="academicToast" class="academic-toast" role="status" aria-live="polite"></div>
+
+    <!-- Login removed: app opens directly to Home -->
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="logo">Q</div>
+                <span class="brand-text">QUARTZ</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#" class="nav-link active">Home</a></li>
+                <li><a href="quartz.html" class="nav-link">school mode</a></li>
+                <li><a href="#" class="nav-link">Notes</a></li>
+                <li><a href="#" class="nav-link">Profile</a></li>
+            </ul>
+            <div class="nav-icons">
+                <button class="icon-btn theme-toggle-btn" aria-label="Theme toggle" title="Toggle theme">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <button class="icon-btn profile-btn" aria-label="User profile">
+                    <div class="profile-icon"></div>
+                </button>
+            </div>
+            <button class="menu-toggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li class="menu-item active">
+                    <a href="#" class="menu-link">
+                        <span class="menu-icon">🏠</span>
+                        <span class="menu-text">Home</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span class="menu-icon">📝</span>
+                        <span class="menu-text">Notes</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="backpack.html" class="menu-link">
+                        <span class="menu-icon">📚</span>
+                        <span class="menu-text">Backpack</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span class="menu-icon">💬</span>
+                        <span class="menu-text">Chats</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span class="menu-icon">⭐</span>
+                        <span class="menu-text">Credits</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span class="menu-icon">🔥</span>
+                        <span class="menu-text">Streak</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span class="menu-icon">👤</span>
+                        <span class="menu-text">Profile</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <span class="menu-icon">⚙️</span>
+                        <span class="menu-text">Settings</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="focus.html" class="menu-link">
+                        <span class="menu-icon">⏱️</span>
+                        <span class="menu-text">Focus</span>
+                    </a>
+                </li>
+                
+            </ul>
+            <div class="sidebar-footer">
+                <div class="upgrade-card">
+                    <p class="upgrade-title">Upgrade to</p>
+                    <p class="upgrade-plan">Quartz Pro</p>
+                    <p class="upgrade-benefits">Unlock unlimited<br>credits, advanced<br>AI & more.</p>
+                    <button class="upgrade-btn">Upgrade</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="hero-content">
+                    <h1 class="hero-title">Welcome back to <span class="gradient-text">Quartz</span></h1>
+                    <p class="hero-subtitle">Your AI-powered learning workspace.</p>
+                    <div class="hero-buttons">
+                        <button class="btn btn-primary">Continue Learning</button>
+                        <button class="btn btn-secondary">Open Notes</button>
+                        <a href="chat.html" class="btn btn-secondary new-chat-link">New Chat</a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="crystal">
+                        <div class="crystal-inner"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats Section -->
+            <section class="stats-section">
+                <div class="stat-card glow-blue">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-content">
+                        <p class="stat-label">Your Streak</p>
+                        <p class="stat-value">12<span class="stat-unit"> days</span></p>
+                        <p class="stat-hint">Keep it up! 💪</p>
+                    </div>
+                    <div class="stat-circle"></div>
+                </div>
+
+                <div class="stat-card glow-purple">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-content">
+                        <p class="stat-label">Your Credits</p>
+                        <p class="stat-value">340<span class="stat-unit"> credits</span></p>
+                        <p class="stat-hint">Use credits to ask AI</p>
+                    </div>
+                    <div class="stat-circle"></div>
+                </div>
+
+                <div class="stat-card glow-cyan">
+                    <div class="stat-icon">📝</div>
+                    <div class="stat-content">
+                        <p class="stat-label">Notes Created</p>
+                        <p class="stat-value">24<span class="stat-unit"> notes</span></p>
+                        <p class="stat-hint">Keep learning!</p>
+                    </div>
+                    <div class="stat-circle"></div>
+                </div>
+
+                <div class="stat-card glow-pink">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-content">
+                        <p class="stat-label">Study Hours</p>
+                        <p class="stat-value">47<span class="stat-unit"> hrs</span></p>
+                        <p class="stat-hint">This month</p>
+                    </div>
+                    <div class="stat-circle"></div>
+                </div>
+            </section>
+
+            <!-- Recent Notes Section -->
+            <section class="recent-section">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Notes</h2>
+                    <a href="#" class="view-all">View all</a>
+                </div>
+                <div class="notes-grid">
+                    <div class="note-card">
+                        <div class="note-icon">📚</div>
+                        <h3 class="note-title">Photosynthesis Explained</h3>
+                        <p class="note-category">Biology • Today</p>
+                    </div>
+                    <div class="note-card">
+                        <div class="note-icon">∑</div>
+                        <h3 class="note-title">Quadratic Equations Formula Sheet</h3>
+                        <p class="note-category">Math • Yesterday</p>
+                    </div>
+                    <div class="note-card">
+                        <div class="note-icon">⚜️</div>
+                        <h3 class="note-title">The French Revolution</h3>
+                        <p class="note-category">History • 2 days ago</p>
+                    </div>
+                    <div class="note-card">
+                        <div class="note-icon">🌍</div>
+                        <h3 class="note-title">Newton's Laws of Motion</h3>
+                        <p class="note-category">Physics • 3 days ago</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Chats Section -->
+            <section class="recent-section">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Chats</h2>
+                    <a href="#" class="view-all">View all</a>
+                </div>
+                <div class="chats-list">
+                    <div class="chat-item">
+                        <div class="chat-icon">✨</div>
+                        <p class="chat-title">Explain photosynthesis in simple terms</p>
+                        <p class="chat-time">Today</p>
+                    </div>
+                    <div class="chat-item">
+                        <div class="chat-icon">✨</div>
+                        <p class="chat-title">Solve this quadratic equation: x² + 5x + 6 = 0</p>
+                        <p class="chat-time">Yesterday</p>
+                    </div>
+                    <div class="chat-item">
+                        <div class="chat-icon">✨</div>
+                        <p class="chat-title">What were the causes of World War 1?</p>
+                        <p class="chat-time">2 days ago</p>
+                    </div>
+                    <div class="chat-item">
+                        <div class="chat-icon">✨</div>
+                        <p class="chat-title">How does gravity work?</p>
+                        <p class="chat-time">3 days ago</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Learning Tools Section -->
+            <section class="tools-section">
+                <div class="section-header">
+                    <h2 class="section-title">Learning Tools</h2>
+                </div>
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="tool-icon">🤖</div>
+                        <h3 class="tool-title">AI Notes</h3>
+                        <p class="tool-desc">Generate comprehensive study notes from any topic</p>
+                        <button class="tool-btn">Start Now →</button>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">🎯</div>
+                        <h3 class="tool-title">Flashcards</h3>
+                        <p class="tool-desc">Create and study interactive flashcards</p>
+                        <button class="tool-btn">Start Now →</button>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">❓</div>
+                        <h3 class="tool-title">Quiz Generator</h3>
+                        <p class="tool-desc">Generate practice quizzes to test your knowledge</p>
+                        <button class="tool-btn">Start Now →</button>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">📖</div>
+                        <h3 class="tool-title">Smart Summaries</h3>
+                        <p class="tool-desc">Get concise summaries of complex topics instantly</p>
+                        <button class="tool-btn">Start Now →</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Account Section -->
+            <section class="account-section">
+                <div class="account-card">
+                    <div class="account-avatar"></div>
+                    <div class="account-info">
+                        <h3 class="account-name">Student Name</h3>
+                        <p class="account-email">student@quartz.ai</p>
+                    </div>
+                    <!-- logout removed -->
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <p class="footer-text">Made for Students. Built by Students.</p>
+                <div class="footer-links">
+                    <a href="#" class="footer-link">Privacy Policy</a>
+                    <span class="footer-divider">•</span>
+                    <a href="#" class="footer-link">Terms of Service</a>
+                    <span class="footer-divider">•</span>
+                    <a href="#" class="footer-link">Support</a>
+                </div>
+                <p class="footer-copyright">© 2024 Quartz. All rights reserved.</p>
+            </footer>
+        </main>
+    </div>
+
+    
+    <script src="../js/academic-profile.js"></script>
+    <script src="../js/academic-profile-init.js"></script>
+    <script src="../js/home.js"></script>
+</body>
+</html>
