@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Quartz - Today's Mission</title>
+<link rel="stylesheet" href="../css/todo.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head><body>
+<div class="background-glow"></div>
+<aside class="sidebar">
+<div class="logo"><h1>Quartz</h1><p>Student Workspace</p></div>
+<nav>
+<a href="home.html">🏠 Home</a>
+<a href="notes.html">📝 Notes</a>
+<a href="chat.html">🤖 AI Chat</a>
+<a href="backpack.html">🎒 Backpack</a>
+<a href="practice.html">🧪 Practice</a>
+<a href="focus.html">⏱ Focus</a>
+<a class="active" href="todo.html">✅ Today's Mission</a>
+</nav></aside>
+<main class="container">
+<header class="hero"><h2>Today's Mission</h2><p>Plan your day. Complete your goals. Earn Quartz Points.</p></header>
+<section class="stats">
+<div class="card"><h3>Progress</h3><div class="progress-bar"><div class="progress-fill" style="width:35%"></div></div><p>3 / 8 Tasks Completed</p></div>
+<div class="card"><h3>Quartz Points</h3><h1>125</h1></div>
+<div class="card"><h3>Daily Streak</h3><h1>🔥 14 Days</h1></div>
+</section>
+<section class="toolbar">
+<input type="text" placeholder="Search tasks...">
+<div class="filters"><button>All</button><button>Active</button><button>Completed</button></div>
+<button class="add-btn">+ Add Task</button>
+</section>
+<section class="tasks">
+<div class="task-card high"><input type="checkbox"><div class="task-content"><h3>Complete Physics DPP</h3><p>Science • High Priority</p></div><div class="due">Today</div><button>Edit</button><button>Delete</button></div>
+<div class="task-card medium"><input type="checkbox"><div class="task-content"><h3>Revise Fractions</h3><p>Maths • Medium Priority</p></div><div class="due">Tomorrow</div><button>Edit</button><button>Delete</button></div>
+</section>
+<div class="floating-add">+</div>
+<div class="modal hidden" id="taskModal"><div class="modal-content">
+<h2>Create New Task</h2>
+<input type="text" placeholder="Task title">
+<textarea placeholder="Description"></textarea>
+<select><option>Science</option><option>Maths</option><option>English</option><option>SST</option><option>Hindi</option><option>Computer</option><option>Personal</option></select>
+<select><option>High</option><option>Medium</option><option>Low</option></select>
+<input type="date">
+<div class="actions"><button>Cancel</button><button>Create Task</button></div>
+</div></div>
+    <button class="icon-btn theme-toggle-btn" aria-label="Theme toggle" title="Toggle theme">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+<script src="../js/todo.js">
+</script>
+</main>
+</body>
+</html>
