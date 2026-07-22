@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quartz Focus | Deep Work</title>
+    <link rel="stylesheet" href="../css/focus.css">
+</head>
+<body>
+    <div class="page-shell">
+        <aside class="sidebar">
+            <div class="brand-block">
+                <div class="brand-mark">Q</div>
+                <div>
+                    <p class="brand-title">QUARTZ</p>
+                    <p class="brand-subtitle">Focus OS</p>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav" aria-label="Primary">
+                <a class="sidebar-link" href="home.html">
+                    <span class="nav-icon">🏠</span>
+                    <span>Home</span>
+                </a>
+                <a class="sidebar-link active" href="focus.html">
+                    <span class="nav-icon">⏱</span>
+                    <span>Quartz Focus</span>
+                </a>
+                <a class="sidebar-link" href="chat.html">
+                    <span class="nav-icon">💬</span>
+                    <span>Chat</span>
+                </a>
+                <a class="sidebar-link" href="backpack.html">
+                    <span class="nav-icon">📚</span>
+                    <span>Backpack</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-card">
+                <p class="sidebar-card-label">Future Ready</p>
+                <h3>AI study recommendations</h3>
+                <p>Smart breaks, homework sync, and calmer deep work loops.</p>
+                <button class="sidebar-card-btn" type="button">Preview</button>
+            </div>
+        </aside>
+
+        <main class="main-panel">
+            <header class="page-header">
+                <div>
+                    <p class="eyebrow">Quartz Focus</p>
+                    <h1>Deep work starts here.</h1>
+                </div>
+                <a class="header-link" href="home.html">← Back to Dashboard</a>
+            </header>
+
+            <section class="hero-card">
+                <div class="clock-column">
+                    <div class="progress-ring">
+                        <svg viewBox="0 0 220 220" class="ring-svg" aria-hidden="true">
+                            <circle cx="110" cy="110" r="90" class="ring-bg"></circle>
+                            <circle cx="110" cy="110" r="90" class="ring-progress" id="progressRing"></circle>
+                        </svg>
+                        <div class="clock-face">
+                            <p class="clock-label">Session Timer</p>
+                            <div id="flipClock" class="flip-clock" aria-live="polite">25:00</div>
+                            <p class="clock-meta">Premium flow • quartz glow</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="session-column">
+                    <div class="timer-options" id="durationOptions" role="group" aria-label="Session duration options">
+                        <button class="duration-btn" data-duration="15">15 min</button>
+                        <button class="duration-btn active" data-duration="25">25 min</button>
+                        <button class="duration-btn" data-duration="45">45 min</button>
+                        <button class="duration-btn" data-duration="60">60 min</button>
+                        <button class="duration-btn" data-duration="custom">Custom</button>
+                    </div>
+
+                    <div class="focus-card">
+                        <div class="focus-card-header">
+                            <p class="section-label">Current Study Session</p>
+                            <span class="status-pill" id="statusPill">Ready</span>
+                        </div>
+                        <label class="field">
+                            <span>Subject</span>
+                            <input id="subjectInput" type="text" placeholder="Physics">
+                        </label>
+                        <label class="field">
+                            <span>Topic</span>
+                            <input id="topicInput" type="text" placeholder="Chapter 6 - Light">
+                        </label>
+                        <div class="session-display" id="sessionDisplay">
+                            <p class="session-display-label">Now studying</p>
+                            <h3 id="sessionSummary">Physics • Chapter 6 - Light</h3>
+                        </div>
+                    </div>
+
+                    <div class="controls">
+                        <button class="control-btn primary" data-action="start">▶ Start Focus</button>
+                        <button class="control-btn" data-action="pause">⏸ Pause</button>
+                        <button class="control-btn danger" data-action="end">⏹ End Session</button>
+                        <button class="control-btn ghost" data-action="reset">🔄 Reset</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="insights-grid">
+                <article class="glass-card metrics-card">
+                    <div class="card-header">
+                        <p class="section-label">Today's Focus</p>
+                        <span class="metric-pill" id="pointsDisplay">0 Quartz</span>
+                    </div>
+                    <div class="progress-bar" aria-label="Today's focus progress">
+                        <span id="progressBarFill"></span>
+                    </div>
+                    <div class="metric-values">
+                        <div>
+                            <strong id="todayHours">2h 15m</strong>
+                            <p>Focus time</p>
+                        </div>
+                        <div>
+                            <strong id="completedSessions">4</strong>
+                            <p>Completed sessions</p>
+                        </div>
+                    </div>
+                    <div class="meta-row">
+                        <div><p>Longest Session</p><strong id="longestSession">60 min</strong></div>
+                        <div><p>Current Streak</p><strong id="streakDisplay">7 days 🔥</strong></div>
+                    </div>
+                </article>
+
+                <article class="glass-card analytics-card">
+                    <div class="card-header">
+                        <p class="section-label">Weekly Analytics</p>
+                        <span class="metric-pill">This week</span>
+                    </div>
+                    <div class="week-bars" id="weekBars" aria-label="Weekly focus chart"></div>
+                    <div class="week-labels">
+                        <span>Mon</span>
+                        <span>Tue</span>
+                        <span>Wed</span>
+                        <span>Thu</span>
+                        <span>Fri</span>
+                        <span>Sat</span>
+                        <span>Sun</span>
+                    </div>
+                </article>
+
+                <article class="glass-card sounds-card">
+                    <div class="card-header">
+                        <p class="section-label">Ambient Sounds</p>
+                        <span class="metric-pill">Optional</span>
+                    </div>
+                    <div class="sound-grid" id="soundGrid"></div>
+                    <div class="sound-controls">
+                        <label class="volume-control">
+                            <span>Volume</span>
+                            <input id="volumeSlider" type="range" min="0" max="100" value="60">
+                        </label>
+                        <button class="control-btn ghost" id="muteButton" type="button">Mute</button>
+                    </div>
+                </article>
+
+                <article class="glass-card notes-card">
+                    <div class="card-header">
+                        <p class="section-label">Session Notes</p>
+                        <span class="metric-pill">Auto-save</span>
+                    </div>
+                    <textarea id="notesInput" placeholder="Capture a thought, formula, or next step..."></textarea>
+                    <p class="notes-hint">Your notes are stored locally while you work.</p>
+                </article>
+            </section>
+        </main>
+    </div>
+    
+    
+    <button class="icon-btn theme-toggle-btn" aria-label="Theme toggle" title="Toggle theme">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+     
+    
+
+    <script src="../js/focus.js"></script>
+</body>
+</html>

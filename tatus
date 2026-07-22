@@ -1,0 +1,18 @@
+* [33m4fc30f8[m[33m ([m[1;36mHEAD[m[33m)[m initial commit
+* [33m84e138e[m Delete CNAME
+* [33m1d347c0[m Create CNAME
+* [33m407115e[m Create Index.html
+* [33m7741ab3[m Initial commit
+* [33m1f9cfb9[m[33m ([m[1;31morigin/main[m[33m)[m Add Backpack feature and theme toggle
+* [33m7074442[m Add chat feature, server, prettier config, and gitignore
+* [33m413c5f0[m final: save all changes
+* [33ma3b659c[m restore modern modes page with big card layout
+* [33m87b5280[m fix: restore modes.css to original simple design, fix supabase key
+* [33m71e756f[m resolve merge conflicts
+*   [33m36bef12[m Merge branch 'main' of https://github.com/hridayrocky777-a11y/Bla # Please enter a commit message to explain why this merge is necessary, # especially if it merges an updated upstream into a topic branch. # # Lines starting with '#' will be ignored, and an empty message aborts # the commit.
+[32m|[m[33m\[m  
+[32m|[m *   [33m1e59fca[m Merge pull request #1 from hridayrocky777-a11y/codespace-effective-capybara-vp5g9wxgrjw3wwvr
+[32m|[m [34m|[m[35m\[m  
+[32m|[m [34m|[m * [33mb3f8233[m Pending changes exported from your codespace
+[32m|[m * [35m|[m [33mf67f0f3[m Update README.md
+[32m|[m [35m|[m[35m/[m  
