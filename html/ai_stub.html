@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AI Stub</title>
+  <style>
+    body { font-family: system-ui, Arial; padding: 1rem; max-width: 700px; margin: auto }
+    #conversation { border: 1px solid #ddd; padding: 1rem; min-height: 200px; background: #fafafa }
+    .msg { margin-bottom: 0.75rem }
+    .user { color: #0b5; }
+    .ai { color: #06f; }
+    .row { display:flex; gap:8px; margin-top:8px }
+    input[type=text] { flex:1; padding:8px }
+    button { padding:8px 12px }
+    small { color:#666 }
+  </style>
+</head>
+<body>
+  <h1>AI Stub (Client-side)</h1>
+  <div id="conversation" aria-live="polite"></div>
+
+  <div class="row">
+    <input id="input" type="text" placeholder="Type a message, e.g. hi" aria-label="Message input" />
+    <button id="send">Send</button>
+  </div>
+  <p><small>Tip: press Enter to send. Type <code>exit</code> to clear conversation.</small></p>
+
+  <script>
+    const input = document.getElementById('input');
+    const send = document.getElementById('send');
+    const conv = document.getElementById('conversation');
+
+    function appendMessage(who, text) {
+      const div = document.createElement('div');
+      div.className = 'msg ' + (who === 'You' ? 'user' : 'ai');
+      div.innerHTML = `<strong>${who}:</strong> ${escapeHtml(text)}`;
+      conv.appendChild(div);
+      conv.scrollTop = conv.scrollHeight;
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function getAiReply(text) {
+      if (!text) return 'we are very sorry, the ai will be coming soon';
+      const t = text.trim().toLowerCase();
+      if (t === 'hi' || t === "hi!") return 'hello,i am quartz ai';
+      if (t === 'exit' || t === 'quit') return '__EXIT__';
+      if (t.includes('?') || /^(who|what|why|how|when|where)\b/.test(t)) return 'we are very sorry, the ai will be coming soon';
+      return 'we are very sorry, the ai will be coming soon';
+    }
+
+    function sendMessage() {
+      const text = input.value;
+      if (!text) return;
+      appendMessage('You', text);
+      input.value = '';
+      const reply = getAiReply(text);
+      if (reply === '__EXIT__') {
+        appendMessage('AI', 'Conversation cleared');
+        conv.innerHTML = '';
+        return;
+      }
+      // small delay to feel like a response
+      setTimeout(() => appendMessage('AI', reply), 250);
+    }
+
+    send.addEventListener('click', sendMessage);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    // focus for quick typing
+    input.focus();
+  </script>
+</body>
+</html>

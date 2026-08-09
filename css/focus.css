@@ -14,6 +14,22 @@
     --shadow: 0 24px 60px rgba(2, 10, 24, 0.45);
 }
 
+:root[data-theme="light"] {
+    color-scheme: light;
+    --bg: #f4f8ff;
+    --bg-soft: rgba(255, 255, 255, 0.84);
+    --panel: rgba(255, 255, 255, 0.86);
+    --panel-strong: rgba(255, 255, 255, 0.95);
+    --border: rgba(13, 110, 253, 0.16);
+    --text: #07111f;
+    --muted: rgba(7, 17, 31, 0.72);
+    --accent: #0d6efd;
+    --accent-strong: #38bdf8;
+    --accent-glow: rgba(13, 110, 253, 0.16);
+    --danger: #e11d48;
+    --shadow: 0 18px 48px rgba(15, 23, 42, 0.12);
+}
+
 * { box-sizing: border-box; }
 html, body {
     margin: 0;
@@ -49,6 +65,32 @@ body.focus-mode .hero-card {
 
 body.focus-mode .clock-face {
     transform: scale(1.04);
+}
+
+body {
+    background: linear-gradient(135deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 80%, #000 20%) 100%);
+}
+
+:root[data-theme="light"] body {
+    background: linear-gradient(135deg, #f8fbff 0%, #e9f3ff 100%);
+}
+
+:root[data-theme="light"] .sidebar,
+:root[data-theme="light"] .page-header,
+:root[data-theme="light"] .hero-card,
+:root[data-theme="light"] .glass-card,
+:root[data-theme="light"] .focus-card {
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text);
+}
+
+:root[data-theme="light"] .header-link,
+:root[data-theme="light"] .sidebar-link {
+    color: var(--muted);
+}
+
+:root[data-theme="light"] .theme-toggle-btn {
+    color: var(--accent);
 }
 
 .page-shell {

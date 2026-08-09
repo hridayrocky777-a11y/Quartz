@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Backpack - Quartz</title>
+  <link rel="stylesheet" href="../css/backpack.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <aside class="sidebar">
+      <div class="brand-block">
+        <div class="brand-mark">Q</div>
+        <div>
+          <p class="brand-title">QUARTZ</p>
+          <p class="brand-subtitle">Backpack</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Primary">
+        <a class="sidebar-link" href="home.html">
+          <span class="nav-icon">🏠</span>
+          <span>Home</span>
+        </a>
+        <a class="sidebar-link" href="focus.html">
+          <span class="nav-icon">⏱</span>
+          <span>Focus</span>
+        </a>
+        <a class="sidebar-link active" href="backpack.html">
+          <span class="nav-icon">🎒</span>
+          <span>Backpack</span>
+        </a>
+        <a class="sidebar-link" href="todo.html">
+          <span class="nav-icon">📋</span>
+          <span>To-Do</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-card">
+        <p class="sidebar-card-label">Study Ready</p>
+        <h3>Your digital toolkit</h3>
+        <p>Keep notes, resources, and plans organized in one place.</p>
+        <button class="sidebar-card-btn" type="button">Open Planner</button>
+      </div>
+    </aside>
+
+    <main class="main-panel">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Learning Hub</p>
+          <h1>Your Backpack</h1>
+          <p class="page-subtitle">Organize subjects, notes, and study materials effortlessly.</p>
+        </div>
+        <a class="header-link" href="home.html">← Back to Dashboard</a>
+      </header>
+
+      <section class="hero-card">
+        <div>
+          <p class="hero-label">Today’s focus</p>
+          <h2>Study smarter with your personalized backpack.</h2>
+          <p>Track resources, save quick notes, and revisit your best materials anytime.</p>
+        </div>
+        <button class="hero-btn" id="addItemBtn" type="button">+ Add Item</button>
+      </section>
+
+      <section class="toolbar">
+        <div class="search-box">
+          <span>🔎</span>
+          <input id="searchInput" type="text" placeholder="Search notes or resources" />
+        </div>
+        <div class="filter-group" role="group" aria-label="Filter backpack items">
+          <button class="filter-chip active" data-filter="all">All</button>
+          <button class="filter-chip" data-filter="notes">Notes</button>
+          <button class="filter-chip" data-filter="resources">Resources</button>
+          <button class="filter-chip" data-filter="tasks">Tasks</button>
+        </div>
+      </section>
+
+      <section class="stats-grid">
+        <article class="stat-card accent-blue">
+          <p class="stat-label">Total Items</p>
+          <h3 id="totalItems">0</h3>
+        </article>
+        <article class="stat-card accent-purple">
+          <p class="stat-label">Notes Saved</p>
+          <h3 id="notesCount">0</h3>
+        </article>
+        <article class="stat-card accent-cyan">
+          <p class="stat-label">Resources</p>
+          <h3 id="resourcesCount">0</h3>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>My Items</h3>
+            <button class="panel-btn" id="clearAllBtn" type="button">Clear</button>
+          </div>
+          <div id="itemList" class="item-list"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Add New Item</h3>
+          </div>
+          <form id="itemForm" class="item-form">
+            <label>
+              Title
+              <input id="titleInput" name="title" placeholder="e.g. Chemistry revision" required />
+            </label>
+            <label>
+              Category
+              <select id="categorySelect" name="category">
+                <option value="notes">Notes</option>
+                <option value="resources">Resources</option>
+                <option value="tasks">Tasks</option>
+              </select>
+            </label>
+            <label>
+              Details
+              <textarea id="detailsInput" name="details" rows="4" placeholder="Add context, links, or reminders"></textarea>
+            </label>
+            <label class="upload-label">
+              Attach File
+              <input id="fileInput" name="file" type="file" />
+            </label>
+            <div id="filePreview" class="file-preview" aria-live="polite"></div>
+            <button class="hero-btn full" type="submit">Save Item</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../js/theme-toggle.js"></script>
+  <script src="../js/backpack.js"></script>
+</body>
+</html>

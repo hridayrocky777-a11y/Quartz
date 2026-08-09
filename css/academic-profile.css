@@ -1,0 +1,219 @@
+:root {
+  --academic-bg: rgba(7, 10, 30, 0.85);
+  --academic-card: rgba(10, 14, 39, 0.95);
+  --academic-border: rgba(0, 212, 255, 0.24);
+  --academic-accent: #00d4ff;
+  --academic-accent-2: #b855ff;
+  --academic-text: #f7fbff;
+  --academic-muted: rgba(255, 255, 255, 0.75);
+}
+
+.academic-profile-trigger {
+  position: fixed;
+  top: 88px;
+  right: 24px;
+  z-index: 1200;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.16), rgba(184, 85, 255, 0.16));
+  color: var(--academic-text);
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px);
+}
+
+.academic-profile-trigger:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 212, 255, 0.5);
+}
+
+.academic-profile-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  z-index: 1500;
+}
+
+.academic-profile-modal.is-open {
+  display: flex;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+}
+
+.modal-card {
+  position: relative;
+  width: min(100%, 640px);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 1.5rem;
+  border-radius: 1.25rem;
+  border: 1px solid var(--academic-border);
+  background: var(--academic-card);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
+  color: var(--academic-text);
+}
+
+.modal-close {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  width: 2.3rem;
+  height: 2.3rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(0, 212, 255, 0.12);
+  color: var(--academic-text);
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.modal-header {
+  margin-bottom: 1.2rem;
+}
+
+.eyebrow {
+  display: inline-block;
+  margin-bottom: 0.35rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(0, 212, 255, 0.14);
+  color: #8fe7ff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.modal-header h2 {
+  margin-bottom: 0.45rem;
+  font-size: 1.5rem;
+}
+
+.modal-subtitle {
+  color: var(--academic-muted);
+  line-height: 1.6;
+}
+
+.step-group + .step-group {
+  margin-top: 1rem;
+}
+
+.step-label-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.step-pill {
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(184, 85, 255, 0.16);
+  color: #e4b8ff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.option-grid,
+.board-grid {
+  display: grid;
+  gap: 0.7rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.option-chip {
+  padding: 0.8rem 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--academic-text);
+  text-align: left;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.option-chip:hover,
+.option-chip.is-selected {
+  border-color: rgba(0, 212, 255, 0.45);
+  background: rgba(0, 212, 255, 0.14);
+  transform: translateY(-1px);
+}
+
+.option-chip strong {
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.option-chip span {
+  color: var(--academic-muted);
+  font-size: 0.9rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.save-profile-btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.8rem 1.1rem;
+  background: linear-gradient(135deg, var(--academic-accent), var(--academic-accent-2));
+  color: #04050d;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.save-profile-btn:hover {
+  transform: translateY(-1px);
+}
+
+.academic-toast {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  max-width: 320px;
+  padding: 0.8rem 1rem;
+  border-radius: 0.8rem;
+  background: rgba(4, 8, 18, 0.95);
+  color: white;
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 1600;
+}
+
+.academic-toast.is-visible {
+  opacity: 1;
+}
+
+@media (max-width: 640px) {
+  .academic-profile-trigger {
+    top: auto;
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  .option-grid,
+  .board-grid {
+    grid-template-columns: 1fr;
+  }
+}
