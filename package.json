@@ -1,0 +1,13 @@
+{
+  "name": "quartz-ai",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "start": "node backend/server.js"
+  },
+  "dependencies": {
+    "@google/genai": "^1.16.0",
+    "dotenv": "^17.2.1"
+  }
+}

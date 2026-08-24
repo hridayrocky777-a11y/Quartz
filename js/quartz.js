@@ -1,7 +1,8 @@
-dconst noteEditor = document.getElementById('noteEditor');
+const noteEditor = document.getElementById('noteEditor');
 const chatForm = document.getElementById('chatForm');
 const chatInput = document.getElementById('chatInput');
 const chatWindow = document.getElementById('chatWindow');
+const sendButton = document.getElementById('sendButton');
 const generateNotesButton = document.getElementById('generateNotes');
 const summarizeNotesButton = document.getElementById('summarizeNotes');
 const clearWorkspaceButton = document.getElementById('clearWorkspace');
@@ -32,7 +33,7 @@ const BACKEND_URL = 'http://localhost:3000';
 // ========== Supabase Configuration ==========
 
 
-if (!supabaseClient) {
+if (typeof supabaseClient === 'undefined' || !supabaseClient) {
   console.warn('Supabase client not initialized. Make sure the CDN script is loaded and SUPABASE_URL is configured.');
 }
 
@@ -87,11 +88,10 @@ function getSelectedText() {
 }
 
 function getEditorText() {
-  return noteEditor.innerText.trim();
+  return noteEditor ? noteEditor.innerText.trim() : '';
 }
 
-// ========== Function to call Backend API ==========
-async function callOpenAIAPI(userMessage) {
+async function callGeminiAPI(userMessage) {
   const editorText = getEditorText();
 
   const response = await fetch(`${BACKEND_URL}/api/chat`, {
@@ -107,45 +107,29 @@ async function callOpenAIAPI(userMessage) {
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Backend API error: ${response.status} ${response.statusText} -- ${errorText}`);
-  }
-
-  const data = await response.json();
-  return data?.message || 'No response returned from AI.';
-}
-
-function createAssistantReplyMock(prompt) {
-  console.warn('OpenAI API not configured yet. Using mock response.');
-  return 'This is where OpenAI API will respond with intelligent answers!';
-}
-
-function createAssistantReply(prompt) {
-  const content = getEditorText();
-  const selected = getSelectedText();
-
-  if (!prompt && !content) {
-    return 'Start by typing some notes or asking a question. I will help you create quick study material instantly.';
-  }
-
-  if (prompt.toLowerCase().includes('summarize')) {
-    if (!content) {
-      return 'Paste or type your study notes first, then click Summarize to see a short review of the material.';
+    let errorMessage = `Request failed (${response.status}).`;
+    try {
+      const errorData = await response.json();
+      if (typeof errorData?.error === 'string' && errorData.error.trim()) {
+        errorMessage = errorData.error;
+      }
+    } catch (error) {
+      // Keep the generic status message when the server response is not JSON.
     }
-    return `Summary: ${content.slice(0, 280)}${content.length > 280 ? '…' : ''}`;
+    throw new Error(errorMessage);
   }
 
-  if (prompt.toLowerCase().includes('generate')) {
-    return 'Generated Notes: Use headings, bullets, and key definitions from your study material to build a fast review sheet.';
+  let data;
+  try {
+    data = await response.json();
+  } catch (error) {
+    throw new Error('The server returned an invalid response.');
   }
 
-  if (prompt.toLowerCase().includes('explain')) {
-    return selected
-      ? `Explanation: ${selected} means ... (use the note context to explain this concept clearly in simple terms).`
-      : 'Highlight a phrase in your study notes or type the concept you want explained, and I will break it down for you.';
+  if (typeof data?.message !== 'string' || !data.message.trim()) {
+    throw new Error('The AI returned an invalid response.');
   }
-
-  return aiResponses[Math.floor(Math.random() * aiResponses.length)];
+  return data.message.trim();
 }
 
 // ========== File upload handler ==========
@@ -192,9 +176,8 @@ function removeFile(index) {
   updateUploadedFilesList();
 }
 
-// ========== Chat Form Handler with Stub ==========
 if (chatForm) {
-  chatForm.addEventListener('submit', (event) => {
+  chatForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const prompt = chatInput.value.trim();
     
@@ -210,42 +193,30 @@ if (chatForm) {
     chatInput.value = '';
     chatInput.focus();
 
-    setTimeout(() => {
-      logDebug('Generating AI reply...');
-      try {
-        const reply = getLocalStubReply(prompt);
-        logDebug('AI reply generated: "' + reply + '"');
-        addChatMessage('assistant', reply);
-      } catch (error) {
-        logError('Error generating reply:', error);
-        addChatMessage('assistant', 'Error generating reply.');
+    if (sendButton) {
+      sendButton.disabled = true;
+      sendButton.textContent = 'Thinking...';
+    }
+
+    try {
+      logDebug('Sending prompt to Gemini backend...');
+      const reply = await callGeminiAPI(prompt);
+      addChatMessage('assistant', reply);
+    } catch (error) {
+      logError('Error requesting AI reply:', error);
+      const message = error instanceof TypeError
+        ? 'Unable to reach the AI server. Make sure Quartz backend is running.'
+        : error.message || 'The AI could not answer right now.';
+      addChatMessage('assistant', message);
+    } finally {
+      if (sendButton) {
+        sendButton.disabled = false;
+        sendButton.textContent = 'Send';
       }
-    }, 250);
+    }
   });
 } else {
   logError('chatForm not found - cannot attach submit listener!');
-}
-
-// Local stub: respond 'hello' to 'hi', otherwise show apology for questions/other messages
-function getLocalStubReply(text) {
-  if (!text) {
-    logDebug('getLocalStubReply called with empty text');
-    return 'we are very sorry, the ai will be coming soon';
-  }
-  
-  const t = text.trim().toLowerCase();
-  let reply = 'we are very sorry, the ai will be coming soon';
-  
-  if (t === 'hi' || t === 'hi!') {
-    reply = 'hello';
-  } else if (t === 'exit' || t === 'quit') {
-    reply = 'Workspace cleared. Starting fresh.';
-  } else if (t.includes('?') || /^(who|what|why|how|when|where)\b/.test(t)) {
-    reply = 'we are very sorry, the ai will be coming soon';
-  }
-  
-  logDebug('getLocalStubReply - Input: "' + t + '" -> Reply: "' + reply + '"');
-  return reply;
 }
 
 // ========== Button Handlers ==========
