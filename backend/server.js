@@ -161,5 +161,5 @@ const server = http.createServer((request, response) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Quartz server running at http://localhost:${PORT}`);
+  console.log(`Quartz server running at http://localhost:${3000}`);
 });
