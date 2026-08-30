@@ -1,0 +1,1072 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quartz Subscription Plans</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        min-height: 100vh;
+        font-family: Arial, Helvetica, sans-serif;
+        background:
+            radial-gradient(circle at 50% -20%, #18285b 0%, transparent 45%),
+            #020713;
+        color: #fff;
+        padding: 18px;
+    }
+
+    /* =========================
+       LEFT NAVBAR
+    ========================= */
+
+    .sidebar {
+        position: fixed;
+        left: 15px;
+        top: 15px;
+        bottom: 15px;
+        width: 68px;
+        z-index: 1000;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        padding: 14px 8px;
+
+        background: rgba(6, 16, 31, 0.94);
+        border: 1px solid #172b4c;
+        border-radius: 14px;
+
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(14px);
+
+        transition: width .25s ease;
+    }
+
+    .nav-logo {
+        width: 40px;
+        height: 40px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 11px;
+
+        background: linear-gradient(135deg, #a94cff, #348cff);
+
+        color: white;
+        font-size: 20px;
+        font-weight: 900;
+
+        box-shadow: 0 5px 20px rgba(100, 80, 255, .3);
+
+        margin-bottom: 25px;
+    }
+
+    .nav-links {
+        width: 100%;
+
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+    }
+
+    .sidebar button {
+        width: 100%;
+        height: 43px;
+
+        border: 0;
+        border-radius: 10px;
+
+        background: transparent;
+        color: #71839f;
+
+        cursor: pointer;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: 9px;
+
+        font-size: 17px;
+        font-weight: 800;
+
+        transition: .2s ease;
+    }
+
+    .sidebar button span {
+        display: none;
+        font-size: 12px;
+    }
+
+    .sidebar button:hover {
+        background: #101f37;
+        color: white;
+        transform: translateX(2px);
+    }
+
+    .sidebar button.active {
+        background: linear-gradient(
+            135deg,
+            rgba(169, 76, 255, .22),
+            rgba(52, 140, 255, .15)
+        );
+
+        color: #c88cff;
+
+        border: 1px solid rgba(169, 76, 255, .35);
+    }
+
+    .nav-bottom {
+        margin-top: auto;
+        width: 100%;
+    }
+
+    .nav-bottom button {
+        color: #657894;
+    }
+
+    .nav-bottom button:hover {
+        color: white;
+    }
+
+    /* =========================
+       MAIN PAGE
+    ========================= */
+
+    .page {
+        max-width: 1180px;
+        margin: auto;
+    }
+
+    .hero {
+        text-align: center;
+        margin-bottom: 14px;
+    }
+
+    .hero h1 {
+        font-size: clamp(25px, 4vw, 43px);
+        font-weight: 900;
+        letter-spacing: 1px;
+        background: linear-gradient(90deg, #b56cff, #ffffff, #59d9ff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .hero p {
+        color: #8291ad;
+        font-size: 12px;
+        margin-top: 3px;
+        font-weight: 700;
+    }
+
+    .plans {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 5px;
+        border: 1px solid #172b4c;
+        background: #06101f;
+        box-shadow: 0 20px 70px rgba(0,0,0,.45);
+        overflow: hidden;
+        border-radius: 9px;
+    }
+
+    .plan {
+        min-width: 0;
+        position: relative;
+        border-right: 1px solid #183052;
+        background: linear-gradient(180deg, rgba(12,27,50,.96), rgba(2,11,23,.98));
+    }
+
+    .plan:last-child {
+        border-right: 0;
+    }
+
+    .plan.free {
+        --accent: #39e47a;
+        --accent2: #a4ffbe;
+    }
+
+    .plan.pro {
+        --accent: #348cff;
+        --accent2: #8ebaff;
+    }
+
+    .plan.elite {
+        --accent: #a94cff;
+        --accent2: #d59aff;
+    }
+
+    .plan.infinite {
+        --accent: #ffb71b;
+        --accent2: #ffe08b;
+    }
+
+    .plan-header {
+        text-align: center;
+        padding: 10px 5px 8px;
+        min-height: 72px;
+        border-bottom: 1px solid #183052;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 7px;
+        color: var(--accent2);
+        background: rgba(255,255,255,.04);
+        border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+        font-size: 13px;
+        font-weight: 900;
+        letter-spacing: .6px;
+    }
+
+    .tagline {
+        margin-top: 5px;
+        color: #7788a4;
+        font-size: 8px;
+        font-weight: 700;
+    }
+
+    .feature {
+        min-height: 61px;
+        padding: 7px 5px;
+        border-bottom: 1px solid #102441;
+        text-align: center;
+    }
+
+    .feature-title {
+        color: #7e91ae;
+        font-size: 8px;
+        font-weight: 800;
+        text-transform: uppercase;
+        margin-bottom: 3px;
+    }
+
+    .feature-value {
+        color: var(--accent2);
+        font-size: 16px;
+        line-height: 1.05;
+        font-weight: 900;
+    }
+
+    .feature-sub {
+        color: #667994;
+        font-size: 7px;
+        margin-top: 2px;
+    }
+
+    .points {
+        min-height: 73px;
+    }
+
+    .included {
+        padding: 8px 8px 12px;
+        min-height: 205px;
+        border-bottom: 1px solid #183052;
+    }
+
+    .included h3 {
+        text-align: center;
+        color: #a6b6cd;
+        font-size: 8px;
+        margin-bottom: 7px;
+        text-transform: uppercase;
+    }
+
+    .included ul {
+        list-style: none;
+    }
+
+    .included li {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: #8394ad;
+        font-size: 7px;
+        margin: 6px 0;
+    }
+
+    .included li span {
+        color: var(--accent);
+        font-size: 9px;
+    }
+
+    .checklist {
+        padding: 8px;
+        min-height: 112px;
+    }
+
+    .checklist h3 {
+        text-align: center;
+        color: #687b99;
+        font-size: 7px;
+        margin-bottom: 5px;
+    }
+
+    .check {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        color: #7587a4;
+        font-size: 8px;
+        margin: 5px 0;
+    }
+
+    .check::before {
+        content: "✓";
+        color: var(--accent);
+        font-weight: 900;
+    }
+
+    .pricing {
+        text-align: center;
+        padding: 10px 6px 12px;
+        border-top: 1px solid #183052;
+    }
+
+    .price {
+        color: var(--accent2);
+        font-size: 20px;
+        font-weight: 900;
+    }
+
+    .price span {
+        color: #657894;
+        font-size: 8px;
+        font-weight: 700;
+    }
+
+    /* Real buttons — no links/underlines */
+
+    .upgrade-btn {
+        width: 100%;
+        margin-top: 7px;
+        padding: 9px 5px;
+
+        border: 1px solid var(--accent);
+        border-radius: 5px;
+
+        background: linear-gradient(
+            180deg,
+            color-mix(in srgb, var(--accent) 25%, #061426),
+            #061426
+        );
+
+        color: var(--accent2);
+
+        font-size: 8px;
+        font-weight: 900;
+
+        cursor: pointer;
+        text-transform: uppercase;
+
+        transition: .2s ease;
+
+        text-decoration: none;
+        outline: none;
+    }
+
+    .upgrade-btn:hover {
+        transform: translateY(-2px);
+
+        background: var(--accent);
+        color: #020713;
+
+        box-shadow:
+            0 7px 22px
+            color-mix(in srgb, var(--accent) 28%, transparent);
+    }
+
+    .upgrade-btn:active {
+        transform: translateY(0);
+    }
+
+    .price-note {
+        color: #566984;
+        font-size: 7px;
+        margin-top: 5px;
+        line-height: 1.35;
+    }
+
+    .bottom-bar {
+        margin-top: 8px;
+
+        border: 1px solid #172b4c;
+        border-radius: 7px;
+
+        background: #071326;
+
+        padding: 9px 13px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 15px;
+    }
+
+    .bottom-bar strong {
+        color: #9d7cff;
+    }
+
+    .bottom-bar p {
+        color: #6e819f;
+        font-size: 8px;
+    }
+
+    .bottom-actions {
+        display: flex;
+        gap: 15px;
+    }
+
+    .bottom-actions button {
+        background: none;
+        border: 0;
+
+        color: #6e87a9;
+
+        cursor: pointer;
+
+        font-size: 8px;
+        font-weight: 800;
+    }
+
+    .bottom-actions button:hover {
+        color: #fff;
+    }
+
+    .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 25px;
+
+        transform: translate(-50%, 20px);
+
+        background: #101d34;
+        border: 1px solid #38547b;
+
+        color: #fff;
+
+        padding: 11px 18px;
+        border-radius: 8px;
+
+        font-size: 12px;
+
+        opacity: 0;
+        pointer-events: none;
+
+        transition: .25s ease;
+
+        box-shadow: 0 10px 35px rgba(0,0,0,.5);
+    }
+
+    .toast.show {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (min-width: 1200px) {
+
+        .sidebar {
+            width: 190px;
+            align-items: stretch;
+        }
+
+        .nav-logo {
+            align-self: center;
+        }
+
+        .sidebar button {
+            justify-content: flex-start;
+            padding-left: 13px;
+        }
+
+        .sidebar button span {
+            display: inline;
+        }
+
+        .page {
+            margin-left: 220px;
+            margin-right: 20px;
+        }
+    }
+
+    @media (max-width: 800px) {
+
+        body {
+            padding: 8px;
+        }
+
+        .plans {
+            overflow-x: auto;
+            grid-template-columns: repeat(4, minmax(170px, 1fr));
+        }
+
+        .bottom-bar {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+    @media (max-width: 600px) {
+
+        .sidebar {
+            left: 8px;
+            right: 8px;
+            top: auto;
+            bottom: 8px;
+
+            width: auto;
+            height: 62px;
+
+            flex-direction: row;
+            justify-content: space-between;
+
+            padding: 7px 10px;
+
+            border-radius: 16px;
+        }
+
+        .nav-logo,
+        .nav-bottom {
+            display: none;
+        }
+
+        .nav-links {
+            flex-direction: row;
+            justify-content: space-around;
+            gap: 4px;
+        }
+
+        .sidebar button {
+            height: 46px;
+            width: 46px;
+        }
+
+        .sidebar button span {
+            display: none;
+        }
+
+        .page {
+            margin: 0;
+            padding-bottom: 80px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     LEFT NAVBAR
+========================= -->
+
+<nav class="sidebar">
+
+    <div class="nav-logo">Q</div>
+
+    <div class="nav-links">
+
+        <button onclick="goTo('chat.html')" title="Chat">
+            💬 <span>Chat</span>
+        </button>
+
+        <button onclick="goTo('home.html')" title="Home">
+            🏠 <span>Home</span>
+        </button>
+
+        <button onclick="goTo('backpack.html')" title="Backpack">
+            🎒 <span>Backpack</span>
+        </button>
+
+        <button onclick="goTo('focus.html')" title="Focus">
+            🎯 <span>Focus</span>
+        </button>
+
+        <button class="active" title="Subscription">
+            💎 <span>Plans</span>
+        </button>
+
+    </div>
+
+    <div class="nav-bottom">
+
+        <button onclick="history.back()" title="Go Back">
+            ← <span>Back</span>
+        </button>
+
+    </div>
+
+</nav>
+
+
+<div class="page">
+
+    <header class="hero">
+        <h1>✦ QUARTZ SUBSCRIPTION PLANS ✦</h1>
+        <p>More Power. More Learning. More You.</p>
+    </header>
+
+    <main class="plans">
+
+        <!-- FREE -->
+
+        <section class="plan free">
+
+            <div class="plan-header">
+                <div class="badge">💎 FREE</div>
+                <div class="tagline">Start your journey</div>
+            </div>
+
+            <div class="feature">
+                <div class="feature-title">💬 All Messages</div>
+                <div class="feature-value">Limited</div>
+                <div class="feature-sub">
+                    Chat with Quartz AI whenever you need help.
+                </div>
+            </div>
+
+            <div class="feature">
+                <div class="feature-title">🧪 AI Quizzes Per Day</div>
+                <div class="feature-value">1</div>
+                <div class="feature-sub">
+                    Generate one quiz every day.
+                </div>
+            </div>
+
+            <div class="feature points">
+                <div class="feature-title">🪙 Quartz Points</div>
+                <div class="feature-value">50</div>
+                <div class="feature-sub">
+                    Earn points every month to spend in the store.
+                </div>
+            </div>
+
+            <div class="feature">
+                <div class="feature-title">🎒 Backpack Capacity</div>
+                <div class="feature-value">10</div>
+                <div class="feature-sub">
+                    Store your books, notes and highlights.
+                </div>
+            </div>
+
+            <div class="included">
+                <h3>Quartz Points can be used to buy:</h3>
+
+                <ul>
+                    <li><span>✦</span> AI Avatars</li>
+                    <li><span>✦</span> Chat Themes</li>
+                    <li><span>✦</span> Custom Quiz Bubbles</li>
+                    <li><span>✦</span> Animated Book Covers</li>
+                    <li><span>✦</span> Premium Note Templates</li>
+                    <li><span>✦</span> Highlight Color Packs</li>
+                </ul>
+            </div>
+
+            <div class="checklist">
+
+                <h3>What's included</h3>
+
+                <div class="check">Core AI tools</div>
+                <div class="check">Study features</div>
+
+            </div>
+
+            <div class="pricing">
+
+                <div class="price">
+                    ₹0 <span>/ month</span>
+                </div>
+
+                <button
+                    class="upgrade-btn"
+                    onclick="selectPlan('Free')">
+                    Get Started
+                </button>
+
+                <div class="price-note">
+                    Basic Quartz features for your journey.
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PRO -->
+
+        <section class="plan pro">
+
+            <div class="plan-header">
+                <div class="badge">🌿 PRO</div>
+                <div class="tagline">Level up your learning</div>
+            </div>
+
+            <div class="feature">
+                <div class="feature-title">💬 All Messages</div>
+                <div class="feature-value">200</div>
+                <div class="feature-sub">
+                    messages per month
+                </div>
+            </div>
+
+            <div class="feature">
+                <div class="feature-title">🧪 AI Quizzes Per Day</div>
+                <div class="feature-value">2</div>
+                <div class="feature-sub">
+                    quizzes per day
+                </div>
+            </div>
+
+            <div class="feature points">
+                <div class="feature-title">🪙 Quartz Points</div>
+                <div class="feature-value">250</div>
+                <div class="feature-sub">
+                    extra points every month
+                </div>
+            </div>
+
+            <div class="feature">
+                <div class="feature-title">🎒 Backpack Capacity</div>
+                <div class="feature-value">250</div>
+                <div class="feature-sub">
+                    books
+                </div>
+            </div>
+
+            <div class="included">
+
+                <h3>Quartz Points can be used to buy:</h3>
+
+                <ul>
+                    <li><span>✦</span> AI Avatars</li>
+                    <li><span>✦</span> Chat Themes</li>
+                    <li><span>✦</span> Custom Quiz Bubbles</li>
+                    <li><span>✦</span> Animated Book Covers</li>
+                    <li><span>✦</span> Premium Note Templates</li>
+                    <li><span>✦</span> Highlight Color Packs</li>
+                </ul>
+
+            </div>
+
+            <div class="checklist">
+
+                <h3>What's included</h3>
+
+                <div class="check">All Free features</div>
+                <div class="check">Pro AI tools</div>
+                <div class="check">Advanced study tools</div>
+                <div class="check">Personalized learning</div>
+                <div class="check">Priority features</div>
+
+            </div>
+
+            <div class="pricing">
+
+                <div class="price">
+                    ₹199 <span>/ month</span>
+                </div>
+
+                <button
+                    class="upgrade-btn"
+                    onclick="selectPlan('Pro')">
+                    Upgrade to Pro
+                </button>
+
+                <div class="price-note">
+                    More tools. More power. More progress.
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ELITE -->
+
+        <section class="plan elite">
+
+            <div class="plan-header">
+                <div class="badge">👑 ELITE</div>
+                <div class="tagline">Unlock more potential</div>
+            </div>
+
+            <div class="feature">
+                <div class="feature-title">💬 All Messages</div>
+                <div class="feature-value">500</div>
+                <div class="feature-sub">
+                    messages per month
+                </div>
+            </div>
+
+            <div class="feature">
+                <div class="feature-title">🧪 AI Quizzes Per Day</div>
+                <div class="feature-value">10</div>
+                <div class="feature-sub">
+                    quizzes per day
+                </div>
+            </div>
+
+            <div class="feature points">
+                <div class="feature-title">🪙 Quartz Points</div>
+                <div class="feature-value">500</div>
+                <div class="feature-sub">
+                    extra points every month
+                </div>
+            </div>
+
+            <div class="feature">
+                <div class="feature-title">🎒 Backpack Capacity</div>
+                <div class="feature-value">500</div>
+                <div class="feature-sub">
+                    books
+                </div>
+            </div>
+
+            <div class="included">
+
+                <h3>Quartz Points can be used to buy:</h3>
+
+                <ul>
+                    <li><span>✦</span> AI Avatars</li>
+                    <li><span>✦</span> Chat Themes</li>
+                    <li><span>✦</span> Custom Quiz Bubbles</li>
+                    <li><span>✦</span> Animated Book Covers</li>
+                    <li><span>✦</span> Premium Note Templates</li>
+                    <li><span>✦</span> Highlight Color Packs</li>
+                </ul>
+
+            </div>
+
+            <div class="checklist">
+
+                <h3>What's included</h3>
+
+                <div class="check">Everything in Pro</div>
+                <div class="check">Priority AI</div>
+                <div class="check">Study analytics</div>
+                <div class="check">Advanced badges</div>
+                <div class="check">Exclusive themes</div>
+
+            </div>
+
+            <div class="pricing">
+
+                <div class="price">
+                    ₹399 <span>/ month</span>
+                </div>
+
+                <button
+                    class="upgrade-btn"
+                    onclick="selectPlan('Elite')">
+                    Upgrade to Elite
+                </button>
+
+                <div class="price-note">
+                    More possibilities. More progress.
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- INFINITE -->
+
+        <section class="plan infinite">
+
+            <div class="plan-header">
+                <div class="badge">👑 INFINITE</div>
+                <div class="tagline">The ultimate experience</div>
+            </div>
+
+            <div class="feature">
+                <div class="feature-title">💬 All Messages</div>
+                <div class="feature-value">1000</div>
+                <div class="feature-sub">
+                    messages per month
+                </div>
+            </div>
+
+            <div class="feature">
+                <div class="feature-title">∞ AI Quizzes</div>
+                <div class="feature-value">Unlimited</div>
+                <div class="feature-sub">
+                    quizzes
+                </div>
+            </div>
+
+            <div class="feature points">
+                <div class="feature-title">🪙 Quartz Points</div>
+                <div class="feature-value">1000</div>
+                <div class="feature-sub">
+                    extra points every month
+                </div>
+            </div>
+
+            <div class="feature">
+                <div class="feature-title">🎒 Backpack Capacity</div>
+                <div class="feature-value">1000</div>
+                <div class="feature-sub">
+                    books
+                </div>
+            </div>
+
+            <div class="included">
+
+                <h3>Quartz Points can be used to buy:</h3>
+
+                <ul>
+                    <li><span>✦</span> AI Avatars</li>
+                    <li><span>✦</span> Chat Themes</li>
+                    <li><span>✦</span> Custom Quiz Bubbles</li>
+                    <li><span>✦</span> Animated Book Covers</li>
+                    <li><span>✦</span> Premium Note Templates</li>
+                    <li><span>✦</span> Highlight Color Packs</li>
+                </ul>
+
+            </div>
+
+            <div class="checklist">
+
+                <h3>What's included</h3>
+
+                <div class="check">Everything in Elite</div>
+                <div class="check">Unlimited quizzes</div>
+                <div class="check">Unlimited study tools</div>
+                <div class="check">Exclusive features</div>
+                <div class="check">Maximum Quartz access</div>
+
+            </div>
+
+            <div class="pricing">
+
+                <div class="price">
+                    ₹799 <span>/ month</span>
+                </div>
+
+                <button
+                    class="upgrade-btn"
+                    onclick="selectPlan('Infinite')">
+                    Upgrade to Infinite
+                </button>
+
+                <div class="price-note">
+                    The best of Quartz. Limitless and premium.
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer class="bottom-bar">
+
+        <p>
+            <strong>💎 Quartz Points</strong>
+            make your learning journey unique and fun.<br>
+            Earn, collect and unlock amazing rewards!
+        </p>
+
+        <div class="bottom-actions">
+
+            <button onclick="showToast('Study section opened')">
+                📘 STUDY
+            </button>
+
+            <button onclick="showToast('Learn section opened')">
+                📚 LEARN
+            </button>
+
+            <button onclick="showToast('Customize section opened')">
+                🎨 CUSTOMIZE
+            </button>
+
+            <button onclick="showToast('Rewards section opened')">
+                ✨ SHINE
+            </button>
+
+        </div>
+
+    </footer>
+
+</div>
+
+
+<div id="toast" class="toast"></div>
+
+
+<script>
+
+    /* =========================
+       NAVIGATION
+    ========================= */
+
+    function goTo(page) {
+        window.location.href = page;
+    }
+
+
+    /* =========================
+       TOAST
+    ========================= */
+
+    function showToast(message) {
+
+        const toast = document.getElementById("toast");
+
+        toast.textContent = message;
+
+        toast.classList.add("show");
+
+        clearTimeout(window.toastTimer);
+
+        window.toastTimer = setTimeout(() => {
+            toast.classList.remove("show");
+        }, 2200);
+
+    }
+
+
+    /* =========================
+       SUBSCRIPTION
+    ========================= */
+
+    function selectPlan(plan) {
+
+        if (plan === "Free") {
+
+            showToast("You're already on Quartz Free!");
+
+            return;
+        }
+
+        showToast(
+            `${plan} selected — payment flow can be connected here.`
+        );
+
+    }
+
+</script>
+
+</body>
+</html>
+```
