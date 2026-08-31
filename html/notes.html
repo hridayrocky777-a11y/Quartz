@@ -1,0 +1,5889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quartz — Notes</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   QUARTZ NOTES
+   LIGHT + DARK THEME
+   ============================================================ */
+
+/* ============================================================
+   TOKENS
+   ============================================================ */
+
+:root{
+  color-scheme: dark;
+
+  --bg: #121319;
+  --bg-soft: #17181f;
+  --panel: #1b1d26;
+  --panel-glass: rgba(27,29,38,0.66);
+
+  --border: rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.14);
+
+  --text: #ece9f2;
+  --text-dim: #9d99ac;
+  --text-faint: #6d697d;
+
+  --accent: #b7a3e6;
+  --accent-strong: #cdbcf0;
+  --accent-soft: rgba(183,163,230,0.14);
+
+  --accent2: #e6b9c6;
+  --accent2-soft: rgba(230,185,198,0.14);
+
+  --success: #8fd0b0;
+  --danger: #e2897f;
+  --danger-soft: rgba(226,137,127,0.14);
+
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 9px;
+
+  --shadow-soft: 0 16px 40px rgba(0,0,0,0.35);
+
+  --font-display: 'Spectral', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --sidebar-w: 234px;
+  --sidebar-w-collapsed: 78px;
+
+  --page-gradient-1: rgba(183,163,230,0.10);
+  --page-gradient-2: rgba(230,185,198,0.07);
+
+  --hover-bg: rgba(255,255,255,0.05);
+  --scroll-thumb: rgba(255,255,255,0.10);
+}
+
+
+/* ============================================================
+   LIGHT THEME
+   ============================================================ */
+
+html[data-theme="light"]{
+  color-scheme: light;
+
+  --bg: #f5f3f8;
+  --bg-soft: #ffffff;
+  --panel: #ffffff;
+  --panel-glass: rgba(255,255,255,0.78);
+
+  --border: rgba(30,25,45,0.10);
+  --border-strong: rgba(30,25,45,0.18);
+
+  --text: #24212b;
+  --text-dim: #625d6d;
+  --text-faint: #8d8798;
+
+  --accent: #8f78c9;
+  --accent-strong: #7259ad;
+  --accent-soft: rgba(143,120,201,0.13);
+
+  --accent2: #c98fa0;
+  --accent2-soft: rgba(201,143,160,0.13);
+
+  --success: #4f9b75;
+  --danger: #c65f56;
+  --danger-soft: rgba(198,95,86,0.12);
+
+  --shadow-soft: 0 16px 40px rgba(40,30,60,0.12);
+
+  --page-gradient-1: rgba(183,163,230,0.16);
+  --page-gradient-2: rgba(230,185,198,0.10);
+
+  --hover-bg: rgba(30,25,45,0.045);
+  --scroll-thumb: rgba(30,25,45,0.16);
+}
+
+
+/* ============================================================
+   GLOBAL
+   ============================================================ */
+
+*{
+  box-sizing:border-box;
+}
+
+html,
+body{
+  height:100%;
+}
+
+body{
+  margin:0;
+
+  font-family:var(--font-body);
+
+  background:
+    radial-gradient(
+      1100px 640px at 85% -8%,
+      var(--page-gradient-1),
+      transparent 60%
+    ),
+    radial-gradient(
+      900px 500px at -10% 100%,
+      var(--page-gradient-2),
+      transparent 55%
+    ),
+    var(--bg);
+
+  color:var(--text);
+
+  -webkit-font-smoothing:antialiased;
+
+  transition:
+    background .25s ease,
+    color .25s ease;
+}
+
+::selection{
+  background:var(--accent-soft);
+  color:var(--accent-strong);
+}
+
+button{
+  font-family:inherit;
+}
+
+a{
+  color:inherit;
+}
+
+::-webkit-scrollbar{
+  width:10px;
+  height:10px;
+}
+
+::-webkit-scrollbar-thumb{
+  background:var(--scroll-thumb);
+  border-radius:20px;
+}
+
+::-webkit-scrollbar-track{
+  background:transparent;
+}
+
+:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+  border-radius:6px;
+}
+
+h1,
+h2,
+h3{
+  font-family:var(--font-display);
+  font-weight:600;
+  margin:0;
+  letter-spacing:.1px;
+}
+
+p{
+  margin:0;
+}
+
+
+/* ============================================================
+   THEME TOGGLE
+   ============================================================ */
+
+.theme-toggle{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+
+  border:1px solid var(--border-strong);
+  background:var(--panel);
+
+  color:var(--text-dim);
+
+  padding:8px 12px;
+
+  border-radius:999px;
+
+  font-size:12.5px;
+  font-weight:600;
+
+  cursor:pointer;
+
+  transition:
+    background .15s ease,
+    border-color .15s ease,
+    color .15s ease,
+    transform .15s ease;
+}
+
+.theme-toggle:hover{
+  background:var(--hover-bg);
+  color:var(--text);
+  transform:translateY(-1px);
+}
+
+.theme-icon{
+  width:18px;
+  height:18px;
+
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:15px;
+}
+
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+
+.app{
+  display:flex;
+  min-height:100vh;
+}
+
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+
+.sidebar{
+  width:var(--sidebar-w);
+  flex-shrink:0;
+
+  background:var(--bg-soft);
+
+  border-right:1px solid var(--border);
+
+  padding:26px 18px;
+
+  display:flex;
+  flex-direction:column;
+
+  gap:30px;
+
+  position:sticky;
+  top:0;
+
+  height:100vh;
+
+  transition:
+    width .2s ease,
+    background .25s ease,
+    border-color .25s ease;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+
+  gap:11px;
+
+  padding:0 6px;
+}
+
+.logo-mark{
+  width:34px;
+  height:34px;
+
+  border-radius:10px;
+
+  background:
+    conic-gradient(
+      from 210deg,
+      var(--accent),
+      var(--accent2),
+      var(--accent)
+    );
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  box-shadow:0 6px 18px rgba(183,163,230,.25);
+
+  flex-shrink:0;
+}
+
+.logo-mark svg{
+  width:18px;
+  height:18px;
+}
+
+.logo-text{
+  font-family:var(--font-display);
+
+  font-size:21px;
+  font-weight:700;
+
+  letter-spacing:.2px;
+}
+
+
+/* ============================================================
+   NAV
+   ============================================================ */
+
+.nav{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.nav-item{
+  display:flex;
+  align-items:center;
+
+  gap:12px;
+
+  padding:10px 12px;
+
+  border-radius:var(--radius-sm);
+
+  color:var(--text-dim);
+
+  text-decoration:none;
+
+  font-size:14.5px;
+
+  cursor:pointer;
+
+  border:none;
+  background:transparent;
+
+  width:100%;
+
+  text-align:left;
+
+  transition:
+    background .15s ease,
+    color .15s ease;
+}
+
+.nav-item svg{
+  width:18px;
+  height:18px;
+
+  flex-shrink:0;
+
+  opacity:.85;
+}
+
+.nav-item:hover{
+  background:var(--hover-bg);
+  color:var(--text);
+}
+
+.nav-item.active{
+  background:var(--accent-soft);
+  color:var(--accent-strong);
+}
+
+.nav-item.active svg{
+  opacity:1;
+}
+
+.nav-label{
+  white-space:nowrap;
+  overflow:hidden;
+}
+
+
+/* ============================================================
+   SIDEBAR FOOT
+   ============================================================ */
+
+.sidebar-foot{
+  margin-top:auto;
+
+  border-top:1px solid var(--border);
+
+  padding-top:16px;
+}
+
+.plan-chip{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  gap:8px;
+
+  background:var(--panel);
+
+  border:1px solid var(--border);
+
+  border-radius:var(--radius-md);
+
+  padding:11px 13px;
+}
+
+.plan-chip-label{
+  font-size:12.5px;
+  color:var(--text-dim);
+}
+
+.plan-chip-name{
+  font-size:13.5px;
+  font-weight:600;
+  color:var(--text);
+}
+
+.upgrade-btn{
+  border:none;
+
+  cursor:pointer;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--accent),
+      var(--accent2)
+    );
+
+  color:#20101f;
+
+  font-weight:700;
+  font-size:12.5px;
+
+  padding:7px 12px;
+
+  border-radius:999px;
+
+  margin-top:10px;
+
+  width:100%;
+
+  transition:
+    transform .15s ease,
+    box-shadow .15s ease;
+}
+
+.upgrade-btn:hover{
+  transform:translateY(-1px);
+
+  box-shadow:
+    0 8px 20px rgba(183,163,230,.25);
+}
+
+
+/* ============================================================
+   MAIN
+   ============================================================ */
+
+.main{
+  flex:1;
+  min-width:0;
+
+  padding:30px 40px 60px;
+}
+
+
+/* ============================================================
+   TOPBAR
+   ============================================================ */
+
+.topbar{
+  display:flex;
+  align-items:center;
+
+  gap:16px;
+
+  margin-bottom:34px;
+
+  flex-wrap:wrap;
+}
+
+.searchbar{
+  flex:1;
+
+  min-width:240px;
+  max-width:640px;
+
+  display:flex;
+  align-items:center;
+
+  gap:10px;
+
+  background:var(--panel);
+
+  border:1px solid var(--border);
+
+  border-radius:999px;
+
+  padding:12px 16px;
+
+  transition:
+    border-color .15s ease,
+    box-shadow .15s ease,
+    background .25s ease;
+}
+
+.searchbar:focus-within{
+  border-color:var(--border-strong);
+
+  box-shadow:
+    0 0 0 4px var(--accent-soft);
+}
+
+.searchbar svg{
+  width:17px;
+  height:17px;
+
+  color:var(--text-faint);
+
+  flex-shrink:0;
+}
+
+.searchbar input{
+  flex:1;
+
+  background:transparent;
+
+  border:none;
+  outline:none;
+
+  color:var(--text);
+
+  font-size:14.5px;
+}
+
+.searchbar input::placeholder{
+  color:var(--text-faint);
+}
+
+.kbd{
+  font-family:var(--font-body);
+
+  font-size:11.5px;
+
+  color:var(--text-faint);
+
+  border:1px solid var(--border-strong);
+
+  border-radius:6px;
+
+  padding:2px 7px;
+
+  flex-shrink:0;
+}
+
+.topbar-right{
+  display:flex;
+  align-items:center;
+
+  gap:12px;
+
+  margin-left:auto;
+}
+
+.plan-pill{
+  font-size:12.5px;
+
+  color:var(--text-dim);
+
+  background:var(--panel);
+
+  border:1px solid var(--border);
+
+  padding:8px 14px;
+
+  border-radius:999px;
+}
+
+.plan-pill strong{
+  color:var(--text);
+  font-weight:600;
+}
+
+.btn-upgrade-top{
+  border:none;
+
+  cursor:pointer;
+
+  background:transparent;
+
+  color:var(--accent-strong);
+
+  border:1px solid rgba(183,163,230,.4);
+
+  padding:8px 15px;
+
+  border-radius:999px;
+
+  font-size:13px;
+  font-weight:600;
+
+  transition:background .15s ease;
+}
+
+.btn-upgrade-top:hover{
+  background:var(--accent-soft);
+}
+
+
+/* ============================================================
+   SECTIONS
+   ============================================================ */
+
+.section{
+  margin-bottom:42px;
+}
+
+.section-head{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+
+  margin-bottom:16px;
+
+  gap:12px;
+
+  flex-wrap:wrap;
+}
+
+.section-head h2{
+  font-size:21px;
+}
+
+.section-sub{
+  font-size:13px;
+
+  color:var(--text-faint);
+
+  margin-top:3px;
+}
+
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+.btn-primary{
+  border:none;
+
+  cursor:pointer;
+
+  background:var(--text);
+
+  color:var(--bg);
+
+  font-weight:600;
+
+  font-size:13.5px;
+
+  padding:10px 17px;
+
+  border-radius:var(--radius-sm);
+
+  display:inline-flex;
+  align-items:center;
+
+  gap:7px;
+
+  transition:
+    transform .15s ease,
+    opacity .15s ease;
+}
+
+.btn-primary:hover{
+  opacity:.88;
+
+  transform:translateY(-1px);
+}
+
+.btn-ghost{
+  border:1px solid var(--border-strong);
+
+  cursor:pointer;
+
+  background:transparent;
+
+  color:var(--text);
+
+  font-weight:500;
+
+  font-size:13.5px;
+
+  padding:9px 16px;
+
+  border-radius:var(--radius-sm);
+
+  transition:background .15s ease;
+}
+
+.btn-ghost:hover{
+  background:var(--hover-bg);
+}
+
+
+/* ============================================================
+   SUBJECT CARDS
+   ============================================================ */
+
+.subjects-grid{
+  display:grid;
+
+  grid-template-columns:
+    repeat(auto-fill,minmax(168px,1fr));
+
+  gap:14px;
+}
+
+.subject-card{
+  position:relative;
+
+  background:var(--panel-glass);
+
+  backdrop-filter:blur(14px);
+
+  border:1px solid var(--border);
+
+  border-radius:var(--radius-lg);
+
+  padding:18px 16px;
+
+  cursor:pointer;
+
+  display:flex;
+  flex-direction:column;
+
+  gap:22px;
+
+  transition:
+    transform .15s ease,
+    border-color .15s ease,
+    background .15s ease;
+}
+
+.subject-card:hover{
+  transform:translateY(-3px);
+
+  border-color:var(--border-strong);
+
+  background:var(--accent-soft);
+}
+
+.subject-icon{
+  width:38px;
+  height:38px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:19px;
+
+  border-radius:11px;
+
+  background:var(--accent-soft);
+}
+
+.subject-name{
+  font-size:14.5px;
+  font-weight:600;
+}
+
+.subject-count{
+  font-size:12px;
+
+  color:var(--text-faint);
+
+  margin-top:2px;
+}
+
+.subject-remove{
+  position:absolute;
+
+  top:10px;
+  right:10px;
+
+  width:22px;
+  height:22px;
+
+  border-radius:50%;
+
+  border:1px solid var(--border-strong);
+
+  background:var(--panel);
+
+  color:var(--text-dim);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  opacity:0;
+
+  transition:
+    opacity .15s ease,
+    color .15s ease,
+    border-color .15s ease;
+
+  cursor:pointer;
+}
+
+.subject-card:hover .subject-remove{
+  opacity:1;
+}
+
+.subject-remove:hover{
+  color:var(--danger);
+
+  border-color:var(--danger);
+}
+
+.subject-remove svg{
+  width:11px;
+  height:11px;
+}
+
+.add-subject-card{
+  background:transparent;
+
+  border:1.5px dashed var(--border-strong);
+
+  border-radius:var(--radius-lg);
+
+  padding:18px 16px;
+
+  display:flex;
+  flex-direction:column;
+
+  align-items:center;
+  justify-content:center;
+
+  gap:8px;
+
+  cursor:pointer;
+
+  color:var(--text-dim);
+
+  min-height:108px;
+
+  transition:
+    border-color .15s ease,
+    color .15s ease,
+    background .15s ease;
+}
+
+.add-subject-card:hover{
+  border-color:var(--accent);
+
+  color:var(--accent-strong);
+
+  background:var(--accent-soft);
+}
+
+.add-subject-card svg{
+  width:20px;
+  height:20px;
+}
+
+.add-subject-card span{
+  font-size:13px;
+  font-weight:600;
+}
+
+
+/* ============================================================
+   NOTES
+   ============================================================ */
+
+.notes-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.note-card{
+  display:flex;
+  align-items:center;
+
+  gap:16px;
+
+  background:var(--panel);
+
+  border:1px solid var(--border);
+
+  border-radius:var(--radius-md);
+
+  padding:13px 14px;
+
+  cursor:pointer;
+
+  transition:
+    border-color .15s ease,
+    background .15s ease;
+}
+
+.note-card:hover{
+  border-color:var(--border-strong);
+
+  background:var(--hover-bg);
+}
+
+.note-thumb{
+  width:46px;
+  height:46px;
+
+  border-radius:12px;
+
+  flex-shrink:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:19px;
+}
+
+.note-body{
+  flex:1;
+  min-width:0;
+}
+
+.note-title{
+  font-size:14.5px;
+  font-weight:600;
+
+  margin-bottom:3px;
+}
+
+.note-meta{
+  font-size:12px;
+
+  color:var(--accent-strong);
+
+  margin-bottom:4px;
+}
+
+.note-preview{
+  font-size:12.5px;
+
+  color:var(--text-faint);
+
+  overflow:hidden;
+
+  text-overflow:ellipsis;
+
+  white-space:nowrap;
+}
+
+.note-side{
+  display:flex;
+  align-items:center;
+
+  gap:14px;
+
+  flex-shrink:0;
+}
+
+.note-time{
+  font-size:11.5px;
+
+  color:var(--text-faint);
+
+  white-space:nowrap;
+}
+
+.note-tag{
+  font-size:11px;
+
+  color:var(--accent2);
+
+  background:var(--accent2-soft);
+
+  padding:3px 9px;
+
+  border-radius:999px;
+
+  white-space:nowrap;
+}
+
+.note-menu-btn{
+  width:28px;
+  height:28px;
+
+  border-radius:8px;
+
+  border:none;
+
+  background:transparent;
+
+  color:var(--text-faint);
+
+  cursor:pointer;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  position:relative;
+
+  flex-shrink:0;
+}
+
+.note-menu-btn:hover{
+  background:var(--hover-bg);
+
+  color:var(--text);
+}
+
+.note-menu{
+  position:absolute;
+
+  top:32px;
+  right:0;
+
+  background:var(--bg-soft);
+
+  border:1px solid var(--border-strong);
+
+  border-radius:var(--radius-sm);
+
+  box-shadow:var(--shadow-soft);
+
+  min-width:120px;
+
+  overflow:hidden;
+
+  z-index:20;
+}
+
+.note-menu button{
+  display:block;
+
+  width:100%;
+
+  text-align:left;
+
+  padding:9px 13px;
+
+  font-size:13px;
+
+  background:transparent;
+
+  border:none;
+
+  color:var(--text);
+
+  cursor:pointer;
+}
+
+.note-menu button:hover{
+  background:var(--hover-bg);
+}
+
+.note-menu button.danger{
+  color:var(--danger);
+}
+
+
+/* ============================================================
+   EMPTY STATES
+   ============================================================ */
+
+.empty-state{
+  text-align:center;
+
+  padding:60px 20px;
+
+  color:var(--text-dim);
+
+  background:var(--panel);
+
+  border:1px dashed var(--border-strong);
+
+  border-radius:var(--radius-lg);
+}
+
+.empty-state svg{
+  width:34px;
+  height:34px;
+
+  color:var(--text-faint);
+
+  margin-bottom:14px;
+}
+
+.empty-state p.title{
+  font-size:15px;
+
+  color:var(--text);
+
+  font-weight:600;
+
+  margin-bottom:6px;
+}
+
+.empty-state p.sub{
+  font-size:13px;
+
+  color:var(--text-faint);
+
+  margin-bottom:18px;
+}
+
+
+/* ============================================================
+   FOLDER VIEW
+   ============================================================ */
+
+.back-link{
+  display:inline-flex;
+
+  align-items:center;
+
+  gap:7px;
+
+  background:none;
+
+  border:none;
+
+  color:var(--text-dim);
+
+  cursor:pointer;
+
+  font-size:13.5px;
+
+  margin-bottom:18px;
+
+  padding:6px 4px;
+}
+
+.back-link:hover{
+  color:var(--text);
+}
+
+.back-link svg{
+  width:15px;
+  height:15px;
+}
+
+.folder-header{
+  display:flex;
+
+  align-items:center;
+
+  gap:14px;
+
+  margin-bottom:22px;
+}
+
+.folder-header .subject-icon{
+  width:46px;
+  height:46px;
+
+  font-size:22px;
+}
+
+.folder-header h1{
+  font-size:25px;
+}
+
+.folder-header .section-sub{
+  margin-top:4px;
+}
+
+
+/* ============================================================
+   EDITOR
+   ============================================================ */
+
+.editor-overlay{
+  position:fixed;
+
+  inset:0;
+
+  z-index:100;
+
+  background:rgba(10,10,14,.6);
+
+  backdrop-filter:blur(6px);
+
+  display:flex;
+
+  align-items:flex-start;
+  justify-content:center;
+
+  padding:32px 20px;
+
+  overflow-y:auto;
+}
+
+html[data-theme="light"] .editor-overlay{
+  background:rgba(30,25,45,.18);
+}
+
+.editor-panel{
+  width:100%;
+
+  max-width:760px;
+
+  background:var(--bg-soft);
+
+  border:1px solid var(--border-strong);
+
+  border-radius:var(--radius-lg);
+
+  box-shadow:var(--shadow-soft);
+
+  overflow:hidden;
+}
+
+.editor-topline{
+  display:flex;
+
+  align-items:center;
+  justify-content:space-between;
+
+  padding:14px 20px;
+
+  border-bottom:1px solid var(--border);
+}
+
+.editor-folder-select{
+  background:var(--panel);
+
+  border:1px solid var(--border-strong);
+
+  color:var(--text-dim);
+
+  font-size:13px;
+
+  border-radius:999px;
+
+  padding:7px 12px;
+
+  cursor:pointer;
+}
+
+.editor-close{
+  background:none;
+
+  border:none;
+
+  color:var(--text-faint);
+
+  cursor:pointer;
+
+  width:30px;
+  height:30px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:8px;
+}
+
+.editor-close:hover{
+  background:var(--hover-bg);
+
+  color:var(--text);
+}
+
+.editor-close svg{
+  width:16px;
+  height:16px;
+}
+
+.editor-title-input{
+  width:100%;
+
+  border:none;
+
+  background:transparent;
+
+  outline:none;
+
+  color:var(--text);
+
+  font-family:var(--font-display);
+
+  font-size:26px;
+
+  font-weight:600;
+
+  padding:20px 24px 6px;
+}
+
+.editor-title-input::placeholder{
+  color:var(--text-faint);
+}
+
+.editor-toolbar{
+  display:flex;
+
+  align-items:center;
+
+  gap:3px;
+
+  flex-wrap:wrap;
+
+  padding:8px 20px;
+
+  border-bottom:1px solid var(--border);
+}
+
+.tool-btn{
+  width:31px;
+  height:31px;
+
+  border-radius:8px;
+
+  border:none;
+
+  background:transparent;
+
+  color:var(--text-dim);
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+
+  cursor:pointer;
+}
+
+.tool-btn:hover{
+  background:var(--hover-bg);
+
+  color:var(--text);
+}
+
+.tool-btn.active{
+  background:var(--accent-soft);
+
+  color:var(--accent-strong);
+}
+
+.tool-btn svg{
+  width:15px;
+  height:15px;
+}
+
+.tool-sep{
+  width:1px;
+  height:20px;
+
+  background:var(--border);
+
+  margin:0 5px;
+}
+
+.editor-body{
+  min-height:260px;
+
+  max-height:46vh;
+
+  overflow-y:auto;
+
+  padding:18px 24px 8px;
+
+  font-size:14.5px;
+
+  line-height:1.7;
+
+  color:var(--text);
+
+  outline:none;
+}
+
+.editor-body:empty:before{
+  content:attr(data-placeholder);
+
+  color:var(--text-faint);
+}
+
+.editor-body mark{
+  background:rgba(230,185,198,.35);
+
+  color:inherit;
+
+  border-radius:3px;
+}
+
+.editor-body h2{
+  font-family:var(--font-display);
+
+  font-size:19px;
+
+  margin:10px 0 6px;
+}
+
+.editor-body ul,
+.editor-body ol{
+  padding-left:22px;
+
+  margin:8px 0;
+}
+
+.editor-tags-row{
+  display:flex;
+
+  align-items:center;
+
+  gap:8px;
+
+  flex-wrap:wrap;
+
+  padding:14px 24px;
+}
+
+.editor-tags-row svg{
+  width:14px;
+  height:14px;
+
+  color:var(--text-faint);
+}
+
+.tag-chip{
+  font-size:11.5px;
+
+  background:var(--accent2-soft);
+
+  color:var(--accent2);
+
+  padding:4px 10px;
+
+  border-radius:999px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:6px;
+}
+
+.tag-chip button{
+  background:none;
+
+  border:none;
+
+  color:inherit;
+
+  cursor:pointer;
+
+  font-size:12px;
+
+  line-height:1;
+
+  padding:0;
+}
+
+.tags-input{
+  border:none;
+
+  background:transparent;
+
+  outline:none;
+
+  color:var(--text);
+
+  font-size:13px;
+
+  flex:1;
+
+  min-width:90px;
+}
+
+.tags-input::placeholder{
+  color:var(--text-faint);
+}
+
+.editor-footer{
+  display:flex;
+
+  align-items:center;
+
+  justify-content:flex-end;
+
+  gap:10px;
+
+  padding:16px 20px;
+
+  border-top:1px solid var(--border);
+}
+
+
+/* ============================================================
+   MODALS
+   ============================================================ */
+
+.modal-backdrop{
+  position:fixed;
+
+  inset:0;
+
+  z-index:200;
+
+  background:rgba(8,8,12,.62);
+
+  backdrop-filter:blur(4px);
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  padding:20px;
+}
+
+html[data-theme="light"] .modal-backdrop{
+  background:rgba(30,25,45,.18);
+}
+
+.modal{
+  width:100%;
+
+  max-width:400px;
+
+  background:var(--bg-soft);
+
+  border:1px solid var(--border-strong);
+
+  border-radius:var(--radius-lg);
+
+  box-shadow:var(--shadow-soft);
+
+  padding:26px 26px 22px;
+}
+
+.modal h3{
+  font-size:19px;
+
+  margin-bottom:8px;
+}
+
+.modal p.desc{
+  font-size:13.5px;
+
+  color:var(--text-dim);
+
+  line-height:1.55;
+
+  margin-bottom:18px;
+}
+
+.field{
+  margin-bottom:14px;
+}
+
+.field label{
+  display:block;
+
+  font-size:12.5px;
+
+  color:var(--text-dim);
+
+  margin-bottom:6px;
+}
+
+.field input,
+.field select{
+  width:100%;
+
+  background:var(--panel);
+
+  border:1px solid var(--border-strong);
+
+  color:var(--text);
+
+  font-size:14px;
+
+  border-radius:var(--radius-sm);
+
+  padding:10px 12px;
+
+  outline:none;
+}
+
+.field input:focus,
+.field select:focus{
+  border-color:var(--accent);
+}
+
+.emoji-row{
+  display:flex;
+
+  gap:7px;
+
+  flex-wrap:wrap;
+
+  margin-top:8px;
+}
+
+.emoji-opt{
+  width:36px;
+  height:36px;
+
+  border-radius:10px;
+
+  border:1.5px solid var(--border-strong);
+
+  background:var(--panel);
+
+  cursor:pointer;
+
+  font-size:16px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:center;
+}
+
+.emoji-opt.selected{
+  border-color:var(--accent);
+
+  background:var(--accent-soft);
+}
+
+.modal-actions{
+  display:flex;
+
+  justify-content:flex-end;
+
+  gap:10px;
+
+  margin-top:20px;
+}
+
+.plan-options{
+  display:flex;
+
+  flex-direction:column;
+
+  gap:9px;
+
+  margin:4px 0 4px;
+}
+
+.plan-opt{
+  display:flex;
+
+  align-items:center;
+  justify-content:space-between;
+
+  border:1.5px solid var(--border-strong);
+
+  border-radius:var(--radius-md);
+
+  padding:12px 14px;
+
+  cursor:pointer;
+}
+
+.plan-opt.current{
+  border-color:var(--accent);
+
+  background:var(--accent-soft);
+}
+
+.plan-opt-name{
+  font-size:14px;
+
+  font-weight:600;
+}
+
+.plan-opt-limit{
+  font-size:12px;
+
+  color:var(--text-faint);
+}
+
+.plan-opt-badge{
+  font-size:11px;
+
+  color:var(--accent-strong);
+}
+
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+
+.toast{
+  position:fixed;
+
+  bottom:26px;
+  left:50%;
+
+  transform:
+    translateX(-50%)
+    translateY(10px);
+
+  background:var(--bg-soft);
+
+  border:1px solid var(--border-strong);
+
+  color:var(--text);
+
+  font-size:13.5px;
+
+  padding:12px 18px;
+
+  border-radius:var(--radius-sm);
+
+  box-shadow:var(--shadow-soft);
+
+  z-index:300;
+
+  opacity:0;
+
+  pointer-events:none;
+
+  transition:
+    opacity .2s ease,
+    transform .2s ease;
+}
+
+.toast.show{
+  opacity:1;
+
+  transform:
+    translateX(-50%)
+    translateY(0);
+}
+
+[hidden]{
+  display:none !important;
+}
+
+
+/* ============================================================
+   THEME TRANSITIONS
+   ============================================================ */
+
+.sidebar,
+.searchbar,
+.subject-card,
+.note-card,
+.empty-state,
+.editor-panel,
+.modal,
+.plan-chip,
+.plan-pill,
+.note-menu,
+.editor-folder-select,
+.field input,
+.field select,
+.emoji-opt,
+.plan-opt,
+.toast{
+  transition:
+    background-color .25s ease,
+    border-color .25s ease,
+    color .25s ease,
+    box-shadow .25s ease;
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width:1000px){
+
+  .sidebar{
+    width:var(--sidebar-w-collapsed);
+
+    padding:24px 12px;
+
+    align-items:center;
+  }
+
+  .logo-text,
+  .nav-label,
+  .sidebar-foot{
+    display:none;
+  }
+
+  .nav-item{
+    justify-content:center;
+
+    padding:11px;
+  }
+
+  .main{
+    padding:24px 22px 50px;
+  }
+}
+
+
+@media (max-width:640px){
+
+  .app{
+    flex-direction:column;
+  }
+
+  .sidebar{
+    width:100%;
+
+    height:auto;
+
+    position:sticky;
+
+    top:0;
+
+    z-index:50;
+
+    flex-direction:row;
+
+    align-items:center;
+
+    padding:12px 14px;
+
+    gap:0;
+
+    border-right:none;
+
+    border-bottom:1px solid var(--border);
+  }
+
+  .logo{
+    padding:0;
+  }
+
+  .logo-text{
+    display:inline;
+
+    font-size:18px;
+  }
+
+  .nav{
+    flex-direction:row;
+
+    margin-left:auto;
+
+    gap:2px;
+  }
+
+  .nav-label{
+    display:none;
+  }
+
+  .nav-item{
+    padding:9px;
+  }
+
+  .sidebar-foot{
+    display:none;
+  }
+
+  .main{
+    padding:20px 16px 40px;
+  }
+
+  .topbar-right{
+    width:100%;
+
+    justify-content:flex-end;
+  }
+
+  .note-card{
+    flex-wrap:wrap;
+  }
+
+  .note-side{
+    margin-left:62px;
+  }
+
+  .subjects-grid{
+    grid-template-columns:
+      repeat(auto-fill,minmax(130px,1fr));
+  }
+}
+</style>
+</head>
+
+
+<body>
+
+<div class="app">
+
+  <!-- ========================================================
+       SIDEBAR
+       ======================================================== -->
+
+  <aside class="sidebar" id="sidebar">
+
+    <div class="logo">
+
+      <div class="logo-mark">
+
+        <svg viewBox="0 0 24 24" fill="none">
+          <path
+            d="M12 2 L20 9 L16 22 L8 22 L4 9 Z"
+            stroke="#171018"
+            stroke-width="1.6"
+            stroke-linejoin="round"
+          />
+
+          <path
+            d="M12 2 L12 22 M4 9 L20 9 M8 22 L16 2 M16 22 L8 2"
+            stroke="#171018"
+            stroke-width="0.8"
+            opacity="0.5"
+          />
+        </svg>
+
+      </div>
+
+      <span class="logo-text">Quartz</span>
+
+    </div>
+
+
+    <nav class="nav">
+
+      <button
+        class="nav-item"
+        data-page="home"
+        data-href="home.html"
+      >
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+        >
+          <path d="M4 11 12 4l8 7M6 10v9h12v-9"/>
+        </svg>
+
+        <span class="nav-label">Home</span>
+
+      </button>
+
+
+      <button
+        class="nav-item active"
+        data-page="notes"
+      >
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+        >
+          <path d="M6 3h9l4 4v14H6z"/>
+          <path d="M14 3v5h5M9 12h6M9 16h6"/>
+        </svg>
+
+        <span class="nav-label">Notes</span>
+
+      </button>
+
+
+      <button
+        class="nav-item"
+        data-page="backpack"
+        data-href="backpack.html"
+      >
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+        >
+          <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        </svg>
+
+        <span class="nav-label">Backpack</span>
+
+      </button>
+
+
+      <button
+        class="nav-item"
+        data-page="focus"
+        data-href="focus.html"
+      >
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+        >
+          <circle cx="12" cy="12" r="8"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+
+        <span class="nav-label">Focus</span>
+
+      </button>
+
+
+      <button
+        class="nav-item"
+        data-page="settings"
+        data-href="setting.html"
+      >
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+        >
+          <circle cx="12" cy="12" r="3"/>
+
+          <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1z"/>
+        </svg>
+
+        <span class="nav-label">Settings</span>
+
+      </button>
+
+    </nav>
+
+
+    <div class="sidebar-foot">
+
+      <div class="plan-chip">
+
+        <div>
+          <div class="plan-chip-label">Plan</div>
+          <div class="plan-chip-name" id="sidebarPlanName">
+            Free
+          </div>
+        </div>
+
+      </div>
+
+      <button
+        class="upgrade-btn"
+        id="sidebarUpgradeBtn"
+      >
+        Upgrade
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <!-- ========================================================
+       MAIN
+       ======================================================== -->
+
+  <main class="main">
+
+    <header class="topbar">
+
+      <div
+        class="searchbar"
+        id="searchbarWrap"
+      >
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <circle cx="11" cy="11" r="7"/>
+          <path d="M21 21l-4.3-4.3"/>
+        </svg>
+
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search your notes..."
+        >
+
+        <span class="kbd">
+          Ctrl + K
+        </span>
+
+      </div>
+
+
+      <div class="topbar-right">
+
+        <!-- THEME TOGGLE -->
+
+        <button
+          class="theme-toggle"
+          id="themeToggle"
+          aria-label="Switch to light mode"
+          title="Switch to light mode"
+        >
+
+          <span
+            class="theme-icon"
+            id="themeIcon"
+          >
+            ☾
+          </span>
+
+          <span id="themeLabel">
+            Dark
+          </span>
+
+        </button>
+
+
+        <div class="plan-pill">
+          Plan:
+          <strong id="topPlanName">
+            Free
+          </strong>
+        </div>
+
+
+        <button
+          class="btn-upgrade-top"
+          id="topUpgradeBtn"
+        >
+          Upgrade
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <!-- ======================================================
+         HOME VIEW
+         ====================================================== -->
+
+    <div id="homeView">
+
+      <section class="section">
+
+        <div class="section-head">
+
+          <div>
+
+            <h2>
+              My Subjects
+            </h2>
+
+            <div
+              class="section-sub"
+              id="subjectsSub"
+            >
+              5 subjects
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div
+          class="subjects-grid"
+          id="subjectsGrid"
+        ></div>
+
+      </section>
+
+
+      <section class="section">
+
+        <div class="section-head">
+
+          <div>
+
+            <h2>
+              Recent Notes
+            </h2>
+
+            <div
+              class="section-sub"
+              id="notesSub"
+            >
+              All notes
+            </div>
+
+          </div>
+
+
+          <button
+            class="btn-primary"
+            id="newNoteBtn"
+          >
+
+            <svg
+              viewBox="0 0 24 24"
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.4"
+            >
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+
+            New Note
+
+          </button>
+
+        </div>
+
+
+        <div
+          class="notes-list"
+          id="notesList"
+        ></div>
+
+      </section>
+
+    </div>
+
+
+    <!-- ======================================================
+         FOLDER VIEW
+         ====================================================== -->
+
+    <div
+      id="folderView"
+      hidden
+    >
+
+      <button
+        class="back-link"
+        id="backBtn"
+      >
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M15 5 8 12l7 7"/>
+        </svg>
+
+        Back
+
+      </button>
+
+
+      <div class="folder-header">
+
+        <div
+          class="subject-icon"
+          id="folderIcon"
+        ></div>
+
+        <div>
+
+          <h1 id="folderName"></h1>
+
+          <div
+            class="section-sub"
+            id="folderCount"
+          ></div>
+
+        </div>
+
+      </div>
+
+
+      <div
+        class="searchbar"
+        style="max-width:420px; margin-bottom:22px;"
+      >
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <circle cx="11" cy="11" r="7"/>
+          <path d="M21 21l-4.3-4.3"/>
+        </svg>
+
+        <input
+          type="text"
+          id="folderSearchInput"
+          placeholder="Search this subject..."
+        >
+
+      </div>
+
+
+      <div class="section-head">
+
+        <div></div>
+
+        <button
+          class="btn-primary"
+          id="folderNewNoteBtn"
+        >
+
+          <svg
+            viewBox="0 0 24 24"
+            width="14"
+            height="14"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.4"
+          >
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+
+          New Note
+
+        </button>
+
+      </div>
+
+
+      <div
+        class="notes-list"
+        id="folderNotesList"
+      ></div>
+
+    </div>
+
+
+    <!-- ======================================================
+         GENERIC VIEW
+         ====================================================== -->
+
+    <div
+      id="genericView"
+      hidden
+    >
+
+      <div class="empty-state">
+
+        <p
+          class="title"
+          id="genericTitle"
+        >
+          Coming soon
+        </p>
+
+        <p
+          class="sub"
+          id="genericSub"
+        >
+          This section isn't built yet — head back to Notes.
+        </p>
+
+        <button
+          class="btn-ghost"
+          id="genericBackBtn"
+        >
+          Go to Notes
+        </button>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<!-- ============================================================
+     NOTE EDITOR
+     ============================================================ -->
+
+<div
+  class="editor-overlay"
+  id="editorOverlay"
+  hidden
+>
+
+  <div class="editor-panel">
+
+    <div class="editor-topline">
+
+      <select
+        class="editor-folder-select"
+        id="editorFolderSelect"
+      ></select>
+
+
+      <button
+        class="editor-close"
+        id="editorCloseBtn"
+        aria-label="Close editor"
+      >
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M6 6l12 12M18 6 6 18"/>
+        </svg>
+
+      </button>
+
+    </div>
+
+
+    <input
+      type="text"
+      class="editor-title-input"
+      id="editorTitleInput"
+      placeholder="Untitled note"
+    >
+
+
+    <div
+      class="editor-toolbar"
+      id="editorToolbar"
+    >
+
+      <button
+        class="tool-btn"
+        data-cmd="bold"
+        title="Bold"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 4h7a3.5 3.5 0 0 1 0 7H6zM6 11h8a3.5 3.5 0 0 1 0 7H6z"/>
+        </svg>
+      </button>
+
+
+      <button
+        class="tool-btn"
+        data-cmd="italic"
+        title="Italic"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10 4h6M6 20h6M13 4l-4 16"/>
+        </svg>
+      </button>
+
+
+      <button
+        class="tool-btn"
+        data-cmd="underline"
+        title="Underline"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 4v6a6 6 0 0 0 12 0V4M5 20h14"/>
+        </svg>
+      </button>
+
+
+      <div class="tool-sep"></div>
+
+
+      <button
+        class="tool-btn"
+        data-cmd="insertUnorderedList"
+        title="Bullet list"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="4.5" cy="6" r="1"/>
+          <circle cx="4.5" cy="12" r="1"/>
+          <circle cx="4.5" cy="18" r="1"/>
+          <path d="M9 6h11M9 12h11M9 18h11"/>
+        </svg>
+      </button>
+
+
+      <button
+        class="tool-btn"
+        data-cmd="insertOrderedList"
+        title="Numbered list"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M9 6h11M9 12h11M9 18h11"/>
+          <text x="1" y="8" font-size="6" fill="currentColor" stroke="none">1</text>
+          <text x="1" y="14" font-size="6" fill="currentColor" stroke="none">2</text>
+          <text x="1" y="20" font-size="6" fill="currentColor" stroke="none">3</text>
+        </svg>
+      </button>
+
+
+      <div class="tool-sep"></div>
+
+
+      <button
+        class="tool-btn"
+        data-cmd="heading"
+        title="Heading"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 5v14M18 5v14M6 12h12"/>
+        </svg>
+      </button>
+
+
+      <button
+        class="tool-btn"
+        data-cmd="highlight"
+        title="Highlight"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="m9 11 6-6 4 4-6 6H9z"/>
+          <path d="M5 21l3.5-3.5M13 9l2 2"/>
+        </svg>
+      </button>
+
+    </div>
+
+
+    <div
+      class="editor-body"
+      id="editorBody"
+      contenteditable="true"
+      data-placeholder="Start writing..."
+    ></div>
+
+
+    <div class="editor-tags-row">
+
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path d="M20 12 12 20 4 12V4h8z"/>
+        <circle cx="8" cy="8" r="1"/>
+      </svg>
+
+
+      <div
+        id="tagChips"
+        style="display:flex; gap:8px; flex-wrap:wrap;"
+      ></div>
+
+
+      <input
+        type="text"
+        class="tags-input"
+        id="tagsInput"
+        placeholder="Add a tag, press Enter"
+      >
+
+    </div>
+
+
+    <div class="editor-footer">
+
+      <button
+        class="btn-ghost"
+        id="editorCancelBtn"
+      >
+        Cancel
+      </button>
+
+      <button
+        class="btn-primary"
+        id="editorSaveBtn"
+      >
+        Save note
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ============================================================
+     MODALS
+     ============================================================ -->
+
+<div
+  class="modal-backdrop"
+  id="modalBackdrop"
+  hidden
+>
+
+
+  <!-- ADD FOLDER -->
+
+  <div
+    class="modal"
+    id="modalAddFolder"
+    hidden
+  >
+
+    <h3>
+      New subject folder
+    </h3>
+
+    <p class="desc">
+      Give it a name and pick an icon.
+    </p>
+
+
+    <div class="field">
+
+      <label for="newFolderName">
+        Folder name
+      </label>
+
+      <input
+        type="text"
+        id="newFolderName"
+        placeholder="e.g. Computer Science"
+        maxlength="30"
+      >
+
+    </div>
+
+
+    <div class="field">
+
+      <label>
+        Icon
+      </label>
+
+      <div
+        class="emoji-row"
+        id="emojiRow"
+      ></div>
+
+    </div>
+
+
+    <div class="modal-actions">
+
+      <button
+        class="btn-ghost"
+        data-close-modal
+      >
+        Cancel
+      </button>
+
+      <button
+        class="btn-primary"
+        id="createFolderBtn"
+      >
+        Create folder
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- LIMIT -->
+
+  <div
+    class="modal"
+    id="modalLimit"
+    hidden
+  >
+
+    <h3>
+      You've reached your custom folder limit.
+    </h3>
+
+    <p class="desc">
+      Upgrade to create more folders.
+    </p>
+
+    <div class="modal-actions">
+
+      <button
+        class="btn-ghost"
+        data-close-modal
+      >
+        Not now
+      </button>
+
+      <button
+        class="btn-primary"
+        id="limitUpgradeBtn"
+      >
+        Upgrade
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- DELETE -->
+
+  <div
+    class="modal"
+    id="modalConfirmDelete"
+    hidden
+  >
+
+    <h3 id="confirmDeleteTitle">
+      Delete this note?
+    </h3>
+
+    <p
+      class="desc"
+      id="confirmDeleteDesc"
+    >
+      This can't be undone.
+    </p>
+
+    <div class="modal-actions">
+
+      <button
+        class="btn-ghost"
+        data-close-modal
+      >
+        Cancel
+      </button>
+
+      <button
+        class="btn-primary"
+        id="confirmDeleteBtn"
+        style="background:var(--danger); color:#2a0f0f;"
+      >
+        Delete
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- UPGRADE -->
+
+  <div
+    class="modal"
+    id="modalUpgrade"
+    hidden
+  >
+
+    <h3>
+      Choose a plan
+    </h3>
+
+    <p class="desc">
+      Demo only — no real payment is taken.
+    </p>
+
+    <div
+      class="plan-options"
+      id="planOptions"
+    ></div>
+
+    <div class="modal-actions">
+
+      <button
+        class="btn-ghost"
+        data-close-modal
+      >
+        Close
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div
+  class="toast"
+  id="toast"
+></div>
+
+
+<script>
+(function(){
+
+"use strict";
+
+
+/* ============================================================
+   THEME SYSTEM
+   ============================================================ */
+
+const LS_THEME = 'quartz_theme';
+
+
+function loadTheme(){
+
+  return localStorage.getItem(LS_THEME) || 'dark';
+
+}
+
+
+function applyTheme(theme){
+
+  document.documentElement.setAttribute(
+    'data-theme',
+    theme
+  );
+
+
+  const icon =
+    document.getElementById('themeIcon');
+
+  const label =
+    document.getElementById('themeLabel');
+
+  const toggle =
+    document.getElementById('themeToggle');
+
+
+  if(!icon || !label || !toggle){
+    return;
+  }
+
+
+  if(theme === 'light'){
+
+    icon.textContent = '☀';
+
+    label.textContent = 'Light';
+
+    toggle.setAttribute(
+      'aria-label',
+      'Switch to dark mode'
+    );
+
+    toggle.title =
+      'Switch to dark mode';
+
+  }else{
+
+    icon.textContent = '☾';
+
+    label.textContent = 'Dark';
+
+    toggle.setAttribute(
+      'aria-label',
+      'Switch to light mode'
+    );
+
+    toggle.title =
+      'Switch to light mode';
+
+  }
+
+}
+
+
+function toggleTheme(){
+
+  const current =
+    document.documentElement
+      .getAttribute('data-theme') || 'dark';
+
+
+  const next =
+    current === 'dark'
+      ? 'light'
+      : 'dark';
+
+
+  localStorage.setItem(
+    LS_THEME,
+    next
+  );
+
+
+  applyTheme(next);
+
+}
+
+
+/* ============================================================
+   DATA
+   ============================================================ */
+
+const DEFAULT_FOLDERS = [
+
+  {
+    id:'math',
+    name:'Mathematics',
+    icon:'📐',
+    default:true
+  },
+
+  {
+    id:'science',
+    name:'Science',
+    icon:'🔬',
+    default:true
+  },
+
+  {
+    id:'social',
+    name:'Social Science',
+    icon:'🌍',
+    default:true
+  },
+
+  {
+    id:'english',
+    name:'English',
+    icon:'📖',
+    default:true
+  },
+
+  {
+    id:'hindi',
+    name:'Hindi',
+    icon:'अ',
+    default:true
+  }
+
+];
+
+
+const PLAN_LIMITS = {
+
+  free:1,
+  premium:3,
+  premiumPlus:5,
+  premiumMax:Infinity
+
+};
+
+
+const PLAN_LABELS = {
+
+  free:'Free',
+  premium:'Premium',
+  premiumPlus:'Premium Plus',
+  premiumMax:'Premium Max'
+
+};
+
+
+const PLAN_ORDER = [
+
+  'free',
+  'premium',
+  'premiumPlus',
+  'premiumMax'
+
+];
+
+
+const EMOJI_CHOICES = [
+
+  '📚',
+  '💻',
+  '🎨',
+  '🎵',
+  '⚗️',
+  '🏛️',
+  '🌱',
+  '⚽',
+  '✏️',
+  '🧮',
+  '🗺️',
+  '🎭'
+
+];
+
+
+/* ============================================================
+   STORAGE
+   ============================================================ */
+
+const LS_FOLDERS =
+  'quartz_folders';
+
+const LS_NOTES =
+  'quartz_notes';
+
+const LS_PLAN =
+  'quartz_plan';
+
+
+function loadFolders(){
+
+  const raw =
+    localStorage.getItem(LS_FOLDERS);
+
+
+  if(raw){
+
+    try{
+
+      return JSON.parse(raw);
+
+    }catch(e){
+
+      console.warn(
+        'Invalid folder storage.'
+      );
+
+    }
+
+  }
+
+
+  saveFolders(
+    DEFAULT_FOLDERS.slice()
+  );
+
+
+  return DEFAULT_FOLDERS.slice();
+
+}
+
+
+function saveFolders(list){
+
+  localStorage.setItem(
+    LS_FOLDERS,
+    JSON.stringify(list)
+  );
+
+}
+
+
+function loadNotes(){
+
+  const raw =
+    localStorage.getItem(LS_NOTES);
+
+
+  if(raw){
+
+    try{
+
+      return JSON.parse(raw);
+
+    }catch(e){
+
+      console.warn(
+        'Invalid notes storage.'
+      );
+
+    }
+
+  }
+
+
+  saveNotes([]);
+
+  return [];
+
+}
+
+
+function saveNotes(list){
+
+  localStorage.setItem(
+    LS_NOTES,
+    JSON.stringify(list)
+  );
+
+}
+
+
+function loadPlan(){
+
+  return (
+    localStorage.getItem(LS_PLAN)
+    || 'free'
+  );
+
+}
+
+
+function savePlan(p){
+
+  localStorage.setItem(
+    LS_PLAN,
+    p
+  );
+
+}
+
+
+/* ============================================================
+   STATE
+   ============================================================ */
+
+let folders =
+  loadFolders();
+
+let notes =
+  loadNotes();
+
+let plan =
+  loadPlan();
+
+let currentView =
+  'home';
+
+let currentFolderId =
+  null;
+
+let homeSearchQuery =
+  '';
+
+let folderSearchQuery =
+  '';
+
+let editingNoteId =
+  null;
+
+let editingTags =
+  [];
+
+let openMenuNoteId =
+  null;
+
+let selectedEmoji =
+  EMOJI_CHOICES[0];
+
+let pendingDeleteType =
+  null;
+
+let pendingDeleteId =
+  null;
+
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+
+function uid(){
+
+  return (
+    'id-' +
+    Date.now().toString(36) +
+    '-' +
+    Math.random()
+      .toString(36)
+      .slice(2,8)
+  );
+
+}
+
+
+function esc(str){
+
+  return (str || '')
+    .replace(
+      /[&<>"']/g,
+      function(c){
+
+        return {
+
+          '&':'&amp;',
+          '<':'&lt;',
+          '>':'&gt;',
+          '"':'&quot;',
+          "'":'&#39;'
+
+        }[c];
+
+      }
+    );
+
+}
+
+
+function stripTags(html){
+
+  const d =
+    document.createElement('div');
+
+  d.innerHTML =
+    html || '';
+
+  return (
+    d.textContent ||
+    d.innerText ||
+    ''
+  ).trim();
+
+}
+
+
+function timeAgo(ts){
+
+  const diff =
+    Math.max(
+      0,
+      Date.now() - ts
+    );
+
+
+  const min =
+    Math.floor(
+      diff / 60000
+    );
+
+
+  if(min < 1){
+
+    return 'just now';
+
+  }
+
+
+  if(min < 60){
+
+    return (
+      min +
+      (min === 1
+        ? ' minute ago'
+        : ' minutes ago')
+    );
+
+  }
+
+
+  const hr =
+    Math.floor(min / 60);
+
+
+  if(hr < 24){
+
+    return (
+      hr +
+      (hr === 1
+        ? ' hour ago'
+        : ' hours ago')
+    );
+
+  }
+
+
+  const day =
+    Math.floor(hr / 24);
+
+
+  if(day < 30){
+
+    return (
+      day +
+      (day === 1
+        ? ' day ago'
+        : ' days ago')
+    );
+
+  }
+
+
+  const mo =
+    Math.floor(day / 30);
+
+
+  return (
+    mo +
+    (mo === 1
+      ? ' month ago'
+      : ' months ago')
+  );
+
+}
+
+
+function folderById(id){
+
+  return folders.find(
+    function(f){
+      return f.id === id;
+    }
+  );
+
+}
+
+
+function customFolderCount(){
+
+  return folders.filter(
+    function(f){
+      return !f.default;
+    }
+  ).length;
+
+}
+
+
+function planLimit(){
+
+  return PLAN_LIMITS[plan];
+
+}
+
+
+function showToast(msg){
+
+  const t =
+    document.getElementById('toast');
+
+
+  t.textContent =
+    msg;
+
+
+  t.classList.add('show');
+
+
+  clearTimeout(
+    showToast._h
+  );
+
+
+  showToast._h =
+    setTimeout(
+      function(){
+
+        t.classList.remove(
+          'show'
+        );
+
+      },
+      2200
+    );
+
+}
+
+
+const ICON_BG = [
+
+  'linear-gradient(135deg,#b7a3e6,#8f78c9)',
+
+  'linear-gradient(135deg,#e6b9c6,#c98fa0)',
+
+  'linear-gradient(135deg,#8fd0b0,#5fa887)',
+
+  'linear-gradient(135deg,#e2c37f,#c99b4a)'
+
+];
+
+
+function thumbGradient(seed){
+
+  let h = 0;
+
+
+  for(
+    let i=0;
+    i<seed.length;
+    i++
+  ){
+
+    h =
+      (
+        h * 31 +
+        seed.charCodeAt(i)
+      ) % ICON_BG.length;
+
+  }
+
+
+  return ICON_BG[
+    Math.abs(h)
+  ];
+
+}
+
+
+/* ============================================================
+   FOLDERS
+   ============================================================ */
+
+function renderFolders(){
+
+  const grid =
+    document.getElementById(
+      'subjectsGrid'
+    );
+
+
+  grid.innerHTML = '';
+
+
+  folders.forEach(
+    function(f){
+
+      const count =
+        notes.filter(
+          function(n){
+            return n.folderId === f.id;
+          }
+        ).length;
+
+
+      const card =
+        document.createElement('div');
+
+
+      card.className =
+        'subject-card';
+
+
+      card.innerHTML =
+
+        (
+          f.default
+          ? ''
+          :
+          '<button class="subject-remove" data-remove-folder="' +
+          f.id +
+          '" aria-label="Delete folder">' +
+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">' +
+
+          '<path d="M6 6l12 12M18 6 6 18"/>' +
+
+          '</svg>' +
+
+          '</button>'
+        ) +
+
+        '<div class="subject-icon">' +
+        esc(f.icon) +
+        '</div>' +
+
+        '<div>' +
+
+        '<div class="subject-name">' +
+        esc(f.name) +
+        '</div>' +
+
+        '<div class="subject-count">' +
+        count +
+        (
+          count === 1
+          ? ' note'
+          : ' notes'
+        ) +
+        '</div>' +
+
+        '</div>';
+
+
+      card.addEventListener(
+        'click',
+        function(e){
+
+          if(
+            e.target.closest(
+              '[data-remove-folder]'
+            )
+          ){
+            return;
+          }
+
+
+          openFolder(f.id);
+
+        }
+      );
+
+
+      grid.appendChild(card);
+
+    }
+  );
+
+
+  const addCard =
+    document.createElement('div');
+
+
+  addCard.className =
+    'add-subject-card';
+
+
+  addCard.id =
+    'addFolderCard';
+
+
+  addCard.innerHTML =
+
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+
+    '<path d="M12 5v14M5 12h14"/>' +
+
+    '</svg>' +
+
+    '<span>Add Folder</span>';
+
+
+  addCard.addEventListener(
+    'click',
+    handleAddFolderClick
+  );
+
+
+  grid.appendChild(
+    addCard
+  );
+
+
+  document.getElementById(
+    'subjectsSub'
+  ).textContent =
+
+    folders.length +
+    (
+      folders.length === 1
+      ? ' subject'
+      : ' subjects'
+    );
+
+
+  document
+    .querySelectorAll(
+      '[data-remove-folder]'
+    )
+    .forEach(
+      function(btn){
+
+        btn.addEventListener(
+          'click',
+          function(e){
+
+            e.stopPropagation();
+
+            askDeleteFolder(
+              btn.getAttribute(
+                'data-remove-folder'
+              )
+            );
+
+          }
+        );
+
+      }
+    );
+
+}
+
+
+function handleAddFolderClick(){
+
+  if(
+    customFolderCount() >=
+    planLimit()
+  ){
+
+    openModal(
+      'modalLimit'
+    );
+
+    return;
+
+  }
+
+
+  document.getElementById(
+    'newFolderName'
+  ).value = '';
+
+
+  selectedEmoji =
+    EMOJI_CHOICES[0];
+
+
+  renderEmojiRow();
+
+
+  openModal(
+    'modalAddFolder'
+  );
+
+
+  setTimeout(
+    function(){
+
+      document.getElementById(
+        'newFolderName'
+      ).focus();
+
+    },
+    30
+  );
+
+}
+
+
+function renderEmojiRow(){
+
+  const row =
+    document.getElementById(
+      'emojiRow'
+    );
+
+
+  row.innerHTML = '';
+
+
+  EMOJI_CHOICES.forEach(
+    function(e){
+
+      const b =
+        document.createElement(
+          'button'
+        );
+
+
+      b.type =
+        'button';
+
+
+      b.className =
+        'emoji-opt' +
+        (
+          e === selectedEmoji
+          ? ' selected'
+          : ''
+        );
+
+
+      b.textContent =
+        e;
+
+
+      b.addEventListener(
+        'click',
+        function(){
+
+          selectedEmoji =
+            e;
+
+          renderEmojiRow();
+
+        }
+      );
+
+
+      row.appendChild(b);
+
+    }
+  );
+
+}
+
+
+function createFolder(){
+
+  const nameInput =
+    document.getElementById(
+      'newFolderName'
+    );
+
+
+  const name =
+    nameInput.value.trim();
+
+
+  if(!name){
+
+    nameInput.focus();
+
+    return;
+
+  }
+
+
+  if(
+    customFolderCount() >=
+    planLimit()
+  ){
+
+    closeModal();
+
+    openModal(
+      'modalLimit'
+    );
+
+    return;
+
+  }
+
+
+  const f = {
+
+    id:uid(),
+
+    name:name,
+
+    icon:selectedEmoji,
+
+    default:false
+
+  };
+
+
+  folders.push(f);
+
+
+  saveFolders(
+    folders
+  );
+
+
+  closeModal();
+
+
+  renderFolders();
+
+
+  populateEditorFolderSelect();
+
+
+  showToast(
+    'Folder "' +
+    name +
+    '" created'
+  );
+
+}
+
+
+function askDeleteFolder(id){
+
+  pendingDeleteType =
+    'folder';
+
+  pendingDeleteId =
+    id;
+
+
+  const f =
+    folderById(id);
+
+
+  const count =
+    notes.filter(
+      function(n){
+        return n.folderId === id;
+      }
+    ).length;
+
+
+  document.getElementById(
+    'confirmDeleteTitle'
+  ).textContent =
+
+    'Delete "' +
+    (
+      f
+      ? f.name
+      : 'this folder'
+    ) +
+    '"?';
+
+
+  document.getElementById(
+    'confirmDeleteDesc'
+  ).textContent =
+
+    count > 0
+
+      ? (
+          'This will also delete ' +
+          count +
+          (
+            count === 1
+            ? ' note'
+            : ' notes'
+          ) +
+          ' inside it. This can\'t be undone.'
+        )
+
+      : 'This can\'t be undone.';
+
+
+  openModal(
+    'modalConfirmDelete'
+  );
+
+}
+
+
+/* ============================================================
+   NOTES
+   ============================================================ */
+
+function noteMatchesQuery(n,q){
+
+  if(!q){
+    return true;
+  }
+
+
+  q =
+    q.toLowerCase();
+
+
+  const folder =
+    folderById(
+      n.folderId
+    );
+
+
+  const hay = [
+
+    n.title,
+
+    folder
+      ? folder.name
+      : '',
+
+    n.topic || '',
+
+    stripTags(
+      n.content
+    ),
+
+    (n.tags || [])
+      .join(' ')
+
+  ]
+    .join(' ')
+    .toLowerCase();
+
+
+  return hay.indexOf(q) !== -1;
+
+}
+
+
+function renderNoteCard(n){
+
+  const folder =
+    folderById(
+      n.folderId
+    ) ||
+    {
+      name:'Unfiled',
+      icon:'📄'
+    };
+
+
+  const card =
+    document.createElement(
+      'div'
+    );
+
+
+  card.className =
+    'note-card';
+
+
+  card.setAttribute(
+    'data-note-id',
+    n.id
+  );
+
+
+  const preview =
+    stripTags(
+      n.content
+    ).slice(0,90);
+
+
+  card.innerHTML =
+
+    '<div class="note-thumb" style="background:' +
+    thumbGradient(n.id) +
+    '">' +
+
+    esc(folder.icon) +
+
+    '</div>' +
+
+
+    '<div class="note-body">' +
+
+      '<div class="note-title">' +
+      esc(
+        n.title ||
+        'Untitled note'
+      ) +
+      '</div>' +
+
+      '<div class="note-meta">' +
+      esc(folder.name) +
+      (
+        n.topic
+        ? ' • ' +
+          esc(n.topic)
+        : ''
+      ) +
+      '</div>' +
+
+      '<div class="note-preview">' +
+      esc(
+        preview ||
+        'No content yet'
+      ) +
+      '</div>' +
+
+    '</div>' +
+
+
+    '<div class="note-side">' +
+
+      '<span class="note-time">' +
+      timeAgo(n.updatedAt) +
+      '</span>' +
+
+      (
+        n.tags &&
+        n.tags[0]
+
+        ?
+
+        '<span class="note-tag">' +
+        esc(n.tags[0]) +
+        '</span>'
+
+        :
+
+        ''
+      ) +
+
+      '<button class="note-menu-btn" data-menu-btn="' +
+      n.id +
+      '">' +
+
+        '<svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor">' +
+          '<circle cx="12" cy="5" r="1.6"/>' +
+          '<circle cx="12" cy="12" r="1.6"/>' +
+          '<circle cx="12" cy="19" r="1.6"/>' +
+        '</svg>' +
+
+      '</button>' +
+
+    '</div>';
+
+
+  card.addEventListener(
+    'click',
+    function(e){
+
+      if(
+        e.target.closest(
+          '[data-menu-btn]'
+        ) ||
+        e.target.closest(
+          '.note-menu'
+        )
+      ){
+
+        return;
+
+      }
+
+
+      openEditor(n.id);
+
+    }
+  );
+
+
+  const menuBtn =
+    card.querySelector(
+      '[data-menu-btn]'
+    );
+
+
+  menuBtn.addEventListener(
+    'click',
+    function(e){
+
+      e.stopPropagation();
+
+
+      openMenuNoteId =
+        (
+          openMenuNoteId === n.id
+        )
+        ? null
+        : n.id;
+
+
+      renderAll();
+
+    }
+  );
+
+
+  if(
+    openMenuNoteId === n.id
+  ){
+
+    const menu =
+      document.createElement(
+        'div'
+      );
+
+
+    menu.className =
+      'note-menu';
+
+
+    menu.innerHTML =
+
+      '<button data-act="edit">Edit</button>' +
+
+      '<button data-act="delete" class="danger">Delete</button>';
+
+
+    menu
+      .querySelector(
+        '[data-act="edit"]'
+      )
+      .addEventListener(
+        'click',
+        function(e){
+
+          e.stopPropagation();
+
+          openMenuNoteId =
+            null;
+
+          openEditor(
+            n.id
+          );
+
+        }
+      );
+
+
+    menu
+      .querySelector(
+        '[data-act="delete"]'
+      )
+      .addEventListener(
+        'click',
+        function(e){
+
+          e.stopPropagation();
+
+          openMenuNoteId =
+            null;
+
+          askDeleteNote(
+            n.id
+          );
+
+        }
+      );
+
+
+    card
+      .querySelector(
+        '.note-side'
+      )
+      .appendChild(menu);
+
+  }
+
+
+  return card;
+
+}
+
+
+function renderHomeNotes(){
+
+  const list =
+    document.getElementById(
+      'notesList'
+    );
+
+
+  list.innerHTML =
+    '';
+
+
+  const filtered =
+    notes
+
+      .filter(
+        function(n){
+          return noteMatchesQuery(
+            n,
+            homeSearchQuery
+          );
+        }
+      )
+
+      .sort(
+        function(a,b){
+          return b.updatedAt -
+                 a.updatedAt;
+        }
+      );
+
+
+  document.getElementById(
+    'notesSub'
+  ).textContent =
+
+    homeSearchQuery
+
+      ?
+
+      (
+        filtered.length +
+        (
+          filtered.length === 1
+          ? ' result'
+          : ' results'
+        )
+      )
+
+      :
+
+      'All notes';
+
+
+  if(
+    filtered.length === 0
+  ){
+
+    list.appendChild(
+      buildEmptyState(
+
+        homeSearchQuery
+          ? 'No notes found.'
+          : 'No notes here yet.',
+
+        homeSearchQuery
+          ? 'Try a different search term.'
+          : 'Notes you create will show up here.',
+
+        !homeSearchQuery
+
+      )
+    );
+
+
+    return;
+
+  }
+
+
+  filtered.forEach(
+    function(n){
+
+      list.appendChild(
+        renderNoteCard(n)
+      );
+
+    }
+  );
+
+}
+
+
+function renderFolderNotes(){
+
+  const list =
+    document.getElementById(
+      'folderNotesList'
+    );
+
+
+  list.innerHTML =
+    '';
+
+
+  const filtered =
+    notes
+
+      .filter(
+        function(n){
+
+          return (
+            n.folderId ===
+            currentFolderId
+          );
+
+        }
+      )
+
+      .filter(
+        function(n){
+
+          return noteMatchesQuery(
+            n,
+            folderSearchQuery
+          );
+
+        }
+      )
+
+      .sort(
+        function(a,b){
+
+          return b.updatedAt -
+                 a.updatedAt;
+
+        }
+      );
+
+
+  if(
+    filtered.length === 0
+  ){
+
+    list.appendChild(
+      buildEmptyState(
+
+        folderSearchQuery
+          ? 'No notes found.'
+          : 'No notes here yet.',
+
+        folderSearchQuery
+          ? 'Try a different search term.'
+          : '',
+
+        !folderSearchQuery
+
+      )
+    );
+
+
+    return;
+
+  }
+
+
+  filtered.forEach(
+    function(n){
+
+      list.appendChild(
+        renderNoteCard(n)
+      );
+
+    }
+  );
+
+}
+
+
+function buildEmptyState(
+  title,
+  sub,
+  showCreateBtn
+){
+
+  const wrap =
+    document.createElement(
+      'div'
+    );
+
+
+  wrap.className =
+    'empty-state';
+
+
+  wrap.innerHTML =
+
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">' +
+
+      '<path d="M6 3h9l4 4v14H6z"/>' +
+
+      '<path d="M14 3v5h5M9 12h6M9 16h6"/>' +
+
+    '</svg>' +
+
+    '<p class="title">' +
+    esc(title) +
+    '</p>' +
+
+    (
+      sub
+      ?
+      '<p class="sub">' +
+      esc(sub) +
+      '</p>'
+      :
+      ''
+    ) +
+
+    (
+      showCreateBtn
+
+      ?
+
+      '<button class="btn-primary" id="emptyCreateBtn">' +
+      '+ Create your first note' +
+      '</button>'
+
+      :
+
+      ''
+    );
+
+
+  if(showCreateBtn){
+
+    setTimeout(
+      function(){
+
+        const b =
+          wrap.querySelector(
+            '#emptyCreateBtn'
+          );
+
+
+        if(b){
+
+          b.addEventListener(
+            'click',
+            function(){
+
+              openEditor(
+                null
+              );
+
+            }
+          );
+
+        }
+
+      },
+      0
+    );
+
+  }
+
+
+  return wrap;
+
+}
+
+
+function askDeleteNote(id){
+
+  pendingDeleteType =
+    'note';
+
+  pendingDeleteId =
+    id;
+
+
+  const n =
+    notes.find(
+      function(x){
+        return x.id === id;
+      }
+    );
+
+
+  document.getElementById(
+    'confirmDeleteTitle'
+  ).textContent =
+
+    'Delete "' +
+
+    (
+      n
+      ? (
+          n.title ||
+          'Untitled note'
+        )
+      : 'this note'
+    ) +
+
+    '"?';
+
+
+  document.getElementById(
+    'confirmDeleteDesc'
+  ).textContent =
+
+    'This can\'t be undone.';
+
+
+  openModal(
+    'modalConfirmDelete'
+  );
+
+}
+
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+
+function openFolder(id){
+
+  currentFolderId =
+    id;
+
+  folderSearchQuery =
+    '';
+
+  document.getElementById(
+    'folderSearchInput'
+  ).value =
+    '';
+
+  currentView =
+    'folder';
+
+  renderAll();
+
+}
+
+
+function goHome(){
+
+  currentView =
+    'home';
+
+  currentFolderId =
+    null;
+
+  renderAll();
+
+}
+
+
+function openGeneric(page){
+
+  currentView =
+    'generic';
+
+
+  const titles = {
+
+    home:'Home',
+    files:'Files',
+    focus:'Focus mode',
+    settings:'Settings'
+
+  };
+
+
+  document.getElementById(
+    'genericTitle'
+  ).textContent =
+
+    titles[page] ||
+    'Coming soon';
+
+
+  document.getElementById(
+    'genericSub'
+  ).textContent =
+
+    'This section isn\'t built in this demo yet — your notes live under Notes.';
+
+
+  renderAll();
+
+}
+
+
+/* ============================================================
+   EDITOR
+   ============================================================ */
+
+function populateEditorFolderSelect(){
+
+  const sel =
+    document.getElementById(
+      'editorFolderSelect'
+    );
+
+
+  sel.innerHTML =
+    '';
+
+
+  folders.forEach(
+    function(f){
+
+      const opt =
+        document.createElement(
+          'option'
+        );
+
+
+      opt.value =
+        f.id;
+
+
+      opt.textContent =
+        f.icon +
+        '  ' +
+        f.name;
+
+
+      sel.appendChild(
+        opt
+      );
+
+    }
+  );
+
+}
+
+
+function openEditor(noteId){
+
+  editingNoteId =
+    noteId;
+
+
+  populateEditorFolderSelect();
+
+
+  const titleInput =
+    document.getElementById(
+      'editorTitleInput'
+    );
+
+
+  const body =
+    document.getElementById(
+      'editorBody'
+    );
+
+
+  if(noteId){
+
+    const n =
+      notes.find(
+        function(x){
+          return x.id === noteId;
+        }
+      );
+
+
+    titleInput.value =
+      n.title || '';
+
+
+    body.innerHTML =
+      n.content || '';
+
+
+    editingTags =
+      (n.tags || [])
+        .slice();
+
+
+    document.getElementById(
+      'editorFolderSelect'
+    ).value =
+      n.folderId;
+
+  }else{
+
+    titleInput.value =
+      '';
+
+
+    body.innerHTML =
+      '';
+
+
+    editingTags =
+      [];
+
+
+    document.getElementById(
+      'editorFolderSelect'
+    ).value =
+      currentFolderId ||
+      folders[0].id;
+
+  }
+
+
+  renderTagChips();
+
+
+  document.getElementById(
+    'editorOverlay'
+  ).hidden =
+    false;
+
+
+  document.body.style.overflow =
+    'hidden';
+
+
+  setTimeout(
+    function(){
+
+      titleInput.focus();
+
+    },
+    30
+  );
+
+}
+
+
+function closeEditor(){
+
+  document.getElementById(
+    'editorOverlay'
+  ).hidden =
+    true;
+
+
+  document.body.style.overflow =
+    '';
+
+
+  editingNoteId =
+    null;
+
+}
+
+
+function renderTagChips(){
+
+  const wrap =
+    document.getElementById(
+      'tagChips'
+    );
+
+
+  wrap.innerHTML =
+    '';
+
+
+  editingTags.forEach(
+    function(tag,i){
+
+      const chip =
+        document.createElement(
+          'span'
+        );
+
+
+      chip.className =
+        'tag-chip';
+
+
+      chip.innerHTML =
+
+        esc(tag) +
+
+        ' <button data-tag-idx="' +
+        i +
+        '">&times;</button>';
+
+
+      chip
+        .querySelector(
+          'button'
+        )
+        .addEventListener(
+          'click',
+          function(){
+
+            editingTags.splice(
+              i,
+              1
+            );
+
+
+            renderTagChips();
+
+          }
+        );
+
+
+      wrap.appendChild(
+        chip
+      );
+
+    }
+  );
+
+}
+
+
+function saveNoteFromEditor(){
+
+  const title =
+    document.getElementById(
+      'editorTitleInput'
+    ).value.trim() ||
+    'Untitled note';
+
+
+  const folderId =
+    document.getElementById(
+      'editorFolderSelect'
+    ).value;
+
+
+  const content =
+    document.getElementById(
+      'editorBody'
+    ).innerHTML;
+
+
+  const now =
+    Date.now();
+
+
+  if(editingNoteId){
+
+    const n =
+      notes.find(
+        function(x){
+          return x.id === editingNoteId;
+        }
+      );
+
+
+    n.title =
+      title;
+
+    n.folderId =
+      folderId;
+
+    n.content =
+      content;
+
+    n.tags =
+      editingTags.slice();
+
+    n.updatedAt =
+      now;
+
+  }else{
+
+    notes.push({
+
+      id:uid(),
+
+      title:title,
+
+      folderId:folderId,
+
+      topic:'',
+
+      content:content,
+
+      tags:
+        editingTags.slice(),
+
+      createdAt:now,
+
+      updatedAt:now
+
+    });
+
+  }
+
+
+  saveNotes(
+    notes
+  );
+
+
+  closeEditor();
+
+
+  renderAll();
+
+
+  showToast(
+    'Note saved'
+  );
+
+}
+
+
+function deleteNoteById(id){
+
+  notes =
+    notes.filter(
+      function(n){
+
+        return n.id !== id;
+
+      }
+    );
+
+
+  saveNotes(
+    notes
+  );
+
+}
+
+
+function deleteFolderById(id){
+
+  notes =
+    notes.filter(
+      function(n){
+
+        return n.folderId !== id;
+
+      }
+    );
+
+
+  folders =
+    folders.filter(
+      function(f){
+
+        return f.id !== id;
+
+      }
+    );
+
+
+  saveNotes(
+    notes
+  );
+
+
+  saveFolders(
+    folders
+  );
+
+
+  if(
+    currentFolderId === id
+  ){
+
+    goHome();
+
+  }
+
+}
+
+
+/* ============================================================
+   TOOLBAR
+   ============================================================ */
+
+function execToolCmd(cmd){
+
+  document.getElementById(
+    'editorBody'
+  ).focus();
+
+
+  if(cmd === 'heading'){
+
+    document.execCommand(
+      'formatBlock',
+      false,
+      'H2'
+    );
+
+  }else if(cmd === 'highlight'){
+
+    document.execCommand(
+      'hiliteColor',
+      false,
+      'rgba(230,185,198,0.4)'
+    );
+
+  }else{
+
+    document.execCommand(
+      cmd,
+      false,
+      null
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   MODALS
+   ============================================================ */
+
+function openModal(id){
+
+  document
+    .querySelectorAll(
+      '.modal'
+    )
+    .forEach(
+      function(m){
+
+        m.hidden =
+          true;
+
+      }
+    );
+
+
+  document.getElementById(
+    id
+  ).hidden =
+    false;
+
+
+  document.getElementById(
+    'modalBackdrop'
+  ).hidden =
+    false;
+
+}
+
+
+function closeModal(){
+
+  document.getElementById(
+    'modalBackdrop'
+  ).hidden =
+    true;
+
+
+  document
+    .querySelectorAll(
+      '.modal'
+    )
+    .forEach(
+      function(m){
+
+        m.hidden =
+          true;
+
+      }
+    );
+
+}
+
+
+function renderPlanOptions(){
+
+  const wrap =
+    document.getElementById(
+      'planOptions'
+    );
+
+
+  wrap.innerHTML =
+    '';
+
+
+  PLAN_ORDER.forEach(
+    function(p){
+
+      const limit =
+        PLAN_LIMITS[p] === Infinity
+
+        ?
+
+        'Unlimited custom folders'
+
+        :
+
+        (
+          PLAN_LIMITS[p] +
+          ' custom folder' +
+          (
+            PLAN_LIMITS[p] === 1
+            ? ''
+            : 's'
+          )
+        );
+
+
+      const opt =
+        document.createElement(
+          'div'
+        );
+
+
+      opt.className =
+        'plan-opt' +
+
+        (
+          p === plan
+          ? ' current'
+          : ''
+        );
+
+
+      opt.innerHTML =
+
+        '<div>' +
+
+          '<div class="plan-opt-name">' +
+          PLAN_LABELS[p] +
+          '</div>' +
+
+          '<div class="plan-opt-limit">' +
+          limit +
+          ' + 5 default subjects' +
+          '</div>' +
+
+        '</div>' +
+
+        (
+
+          p === plan
+
+          ?
+
+          '<span class="plan-opt-badge">Current</span>'
+
+          :
+
+          '<span class="plan-opt-badge">Select</span>'
+
+        );
+
+
+      opt.addEventListener(
+        'click',
+        function(){
+
+          plan =
+            p;
+
+
+          savePlan(
+            plan
+          );
+
+
+          closeModal();
+
+
+          renderAll();
+
+
+          showToast(
+            'Switched to ' +
+            PLAN_LABELS[p] +
+            ' (demo)'
+          );
+
+        }
+      );
+
+
+      wrap.appendChild(
+        opt
+      );
+
+    }
+  );
+
+}
+
+
+/* ============================================================
+   SEARCH
+   ============================================================ */
+
+function focusSearch(){
+
+  document.getElementById(
+    'searchInput'
+  ).focus();
+
+}
+
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+
+function renderPlanChrome(){
+
+  document.getElementById(
+    'sidebarPlanName'
+  ).textContent =
+    PLAN_LABELS[plan];
+
+
+  document.getElementById(
+    'topPlanName'
+  ).textContent =
+    PLAN_LABELS[plan];
+
+}
+
+
+function renderAll(){
+
+  document.getElementById(
+    'homeView'
+  ).hidden =
+    currentView !== 'home';
+
+
+  document.getElementById(
+    'folderView'
+  ).hidden =
+    currentView !== 'folder';
+
+
+  document.getElementById(
+    'genericView'
+  ).hidden =
+    currentView !== 'generic';
+
+
+  renderPlanChrome();
+
+
+  if(
+    currentView === 'home'
+  ){
+
+    renderFolders();
+
+    renderHomeNotes();
+
+  }else if(
+    currentView === 'folder'
+  ){
+
+    const f =
+      folderById(
+        currentFolderId
+      );
+
+
+    if(!f){
+
+      goHome();
+
+      return;
+
+    }
+
+
+    document.getElementById(
+      'folderIcon'
+    ).textContent =
+      f.icon;
+
+
+    document.getElementById(
+      'folderName'
+    ).textContent =
+      f.name;
+
+
+    const count =
+      notes.filter(
+        function(n){
+
+          return (
+            n.folderId ===
+            f.id
+          );
+
+        }
+      ).length;
+
+
+    document.getElementById(
+      'folderCount'
+    ).textContent =
+
+      count +
+
+      (
+        count === 1
+        ? ' note'
+        : ' notes'
+      );
+
+
+    renderFolderNotes();
+
+  }
+
+
+  document
+    .querySelectorAll(
+      '.nav-item'
+    )
+    .forEach(
+      function(b){
+
+        b.classList.toggle(
+
+          'active',
+
+          b.getAttribute(
+            'data-page'
+          ) === 'notes' &&
+
+          (
+            currentView === 'home' ||
+            currentView === 'folder'
+          )
+
+        );
+
+      }
+    );
+
+}
+
+
+/* ============================================================
+   EVENTS
+   ============================================================ */
+
+function bindEvents(){
+
+  /* THEME */
+
+  document
+    .getElementById(
+      'themeToggle'
+    )
+    .addEventListener(
+      'click',
+      toggleTheme
+    );
+
+
+  /* SEARCH */
+
+  document
+    .getElementById(
+      'searchInput'
+    )
+    .addEventListener(
+      'input',
+      function(e){
+
+        homeSearchQuery =
+          e.target.value;
+
+        renderHomeNotes();
+
+      }
+    );
+
+
+  document
+    .getElementById(
+      'searchbarWrap'
+    )
+    .addEventListener(
+      'click',
+      function(){
+
+        focusSearch();
+
+      }
+    );
+
+
+  document
+    .getElementById(
+      'folderSearchInput'
+    )
+    .addEventListener(
+      'input',
+      function(e){
+
+        folderSearchQuery =
+          e.target.value;
+
+        renderFolderNotes();
+
+      }
+    );
+
+
+  /* KEYBOARD */
+
+  document.addEventListener(
+    'keydown',
+    function(e){
+
+      if(
+        (
+          e.ctrlKey ||
+          e.metaKey
+        ) &&
+        e.key.toLowerCase() === 'k'
+      ){
+
+        e.preventDefault();
+
+        focusSearch();
+
+      }
+
+
+      if(
+        e.key === 'Escape'
+      ){
+
+        if(
+          !document.getElementById(
+            'modalBackdrop'
+          ).hidden
+        ){
+
+          closeModal();
+
+        }else if(
+          !document.getElementById(
+            'editorOverlay'
+          ).hidden
+        ){
+
+          closeEditor();
+
+        }
+
+      }
+
+    }
+  );
+
+
+  /* NAVIGATION */
+
+  document
+    .querySelectorAll(
+      '.nav-item'
+    )
+    .forEach(
+      function(btn){
+
+        btn.addEventListener(
+          'click',
+          function(){
+
+            const href =
+              btn.getAttribute(
+                'data-href'
+              );
+
+
+            if(href){
+
+              window.location.href =
+                href;
+
+              return;
+
+            }
+
+
+            document
+              .querySelectorAll(
+                '.nav-item'
+              )
+              .forEach(
+                function(b){
+
+                  b.classList.remove(
+                    'active'
+                  );
+
+                }
+              );
+
+
+            btn.classList.add(
+              'active'
+            );
+
+
+            const page =
+              btn.getAttribute(
+                'data-page'
+              );
+
+
+            if(
+              page === 'notes'
+            ){
+
+              goHome();
+
+            }else{
+
+              openGeneric(
+                page
+              );
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+
+  /* NEW NOTES */
+
+  document
+    .getElementById(
+      'newNoteBtn'
+    )
+    .addEventListener(
+      'click',
+      function(){
+
+        openEditor(
+          null
+        );
+
+      }
+    );
+
+
+  document
+    .getElementById(
+      'folderNewNoteBtn'
+    )
+    .addEventListener(
+      'click',
+      function(){
+
+        openEditor(
+          null
+        );
+
+      }
+    );
+
+
+  /* BACK */
+
+  document
+    .getElementById(
+      'backBtn'
+    )
+    .addEventListener(
+      'click',
+      goHome
+    );
+
+
+  document
+    .getElementById(
+      'genericBackBtn'
+    )
+    .addEventListener(
+      'click',
+      function(){
+
+        document
+          .querySelectorAll(
+            '.nav-item'
+          )
+          .forEach(
+            function(b){
+
+              b.classList.remove(
+                'active'
+              );
+
+            }
+          );
+
+
+        document
+          .querySelector(
+            '[data-page="notes"]'
+          )
+          .classList.add(
+            'active'
+          );
+
+
+        goHome();
+
+      }
+    );
+
+
+  /* UPGRADE */
+
+  document
+    .getElementById(
+      'sidebarUpgradeBtn'
+    )
+    .addEventListener(
+      'click',
+      function(){
+
+        window.location.href =
+          'premium.html';
+
+      }
+    );
+
+
+  document
+    .getElementById(
+      'topUpgradeBtn'
+    )
+    .addEventListener(
+      'click',
+      function(){
+
+        window.location.href =
+          'premium.html';
+
+      }
+    );
+
+
+  document
+    .getElementById(
+      'limitUpgradeBtn'
+    )
+    .addEventListener(
+      'click',
+      function(){
+
+        window.location.href =
+          'premium.html';
+
+      }
+    );
+
+
+  /* FOLDER */
+
+  document
+    .getElementById(
+      'createFolderBtn'
+    )
+    .addEventListener(
+      'click',
+      createFolder
+    );
+
+
+  document
+    .getElementById(
+      'newFolderName'
+    )
+    .addEventListener(
+      'keydown',
+      function(e){
+
+        if(
+          e.key === 'Enter'
+        ){
+
+          createFolder();
+
+        }
+
+      }
+    );
+
+
+  /* DELETE */
+
+  document
+    .getElementById(
+      'confirmDeleteBtn'
+    )
+    .addEventListener(
+      'click',
+      function(){
+
+        if(
+          pendingDeleteType ===
+          'note'
+        ){
+
+          deleteNoteById(
+            pendingDeleteId
+          );
+
+        }else if(
+          pendingDeleteType ===
+          'folder'
+        ){
+
+          deleteFolderById(
+            pendingDeleteId
+          );
+
+        }
+
+
+        closeModal();
+
+        renderAll();
+
+
+        showToast(
+
+          pendingDeleteType ===
+          'note'
+
+            ? 'Note deleted'
+
+            : 'Folder deleted'
+
+        );
+
+
+        pendingDeleteType =
+          null;
+
+        pendingDeleteId =
+          null;
+
+      }
+    );
+
+
+  document
+    .querySelectorAll(
+      '[data-close-modal]'
+    )
+    .forEach(
+      function(b){
+
+        b.addEventListener(
+          'click',
+          closeModal
+        );
+
+      }
+    );
+
+
+  document
+    .getElementById(
+      'modalBackdrop'
+    )
+    .addEventListener(
+      'click',
+      function(e){
+
+        if(
+          e.target.id ===
+          'modalBackdrop'
+        ){
+
+          closeModal();
+
+        }
+
+      }
+    );
+
+
+  /* EDITOR */
+
+  document
+    .getElementById(
+      'editorCloseBtn'
+    )
+    .addEventListener(
+      'click',
+      closeEditor
+    );
+
+
+  document
+    .getElementById(
+      'editorCancelBtn'
+    )
+    .addEventListener(
+      'click',
+      closeEditor
+    );
+
+
+  document
+    .getElementById(
+      'editorSaveBtn'
+    )
+    .addEventListener(
+      'click',
+      saveNoteFromEditor
+    );
+
+
+  document
+    .getElementById(
+      'editorOverlay'
+    )
+    .addEventListener(
+      'click',
+      function(e){
+
+        if(
+          e.target.id ===
+          'editorOverlay'
+        ){
+
+          closeEditor();
+
+        }
+
+      }
+    );
+
+
+  /* TOOLBAR */
+
+  document
+    .querySelectorAll(
+      '#editorToolbar .tool-btn'
+    )
+    .forEach(
+      function(b){
+
+        b.addEventListener(
+          'click',
+          function(){
+
+            execToolCmd(
+              b.getAttribute(
+                'data-cmd'
+              )
+            );
+
+          }
+        );
+
+      }
+    );
+
+
+  /* TAGS */
+
+  const tagsInput =
+    document.getElementById(
+      'tagsInput'
+    );
+
+
+  tagsInput.addEventListener(
+    'keydown',
+    function(e){
+
+      if(
+        e.key === 'Enter' &&
+        tagsInput.value.trim()
+      ){
+
+        e.preventDefault();
+
+
+        const val =
+          tagsInput.value.trim();
+
+
+        if(
+          editingTags.indexOf(
+            val
+          ) === -1
+        ){
+
+          editingTags.push(
+            val
+          );
+
+        }
+
+
+        tagsInput.value =
+          '';
+
+
+        renderTagChips();
+
+      }
+
+    }
+  );
+
+
+  /* CLOSE NOTE MENU */
+
+  document.addEventListener(
+    'click',
+    function(e){
+
+      if(
+        openMenuNoteId &&
+
+        !e.target.closest(
+          '.note-menu'
+        ) &&
+
+        !e.target.closest(
+          '[data-menu-btn]'
+        )
+      ){
+
+        openMenuNoteId =
+          null;
+
+        renderAll();
+
+      }
+
+    }
+  );
+
+}
+
+
+/* ============================================================
+   INIT
+   ============================================================ */
+
+function init(){
+
+  /*
+     Apply theme BEFORE rendering the app.
+     This prevents the page from staying dark
+     after the user previously selected light mode.
+  */
+
+  applyTheme(
+    loadTheme()
+  );
+
+
+  renderEmojiRow();
+
+  bindEvents();
+
+  renderAll();
+
+}
+
+
+init();
+
+
+})();
+</script>
+
+</body>
+</html>
