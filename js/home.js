@@ -1,8 +1,14 @@
+const GITHUB_PAGES_URL = "https://hridayrocky777-a11y.github.io/Quartz";
+const localHosts = new Set(["localhost", "127.0.0.1", "[::1]"]);
+const authRedirectBase = localHosts.has(window.location.hostname)
+    ? window.location.origin
+    : GITHUB_PAGES_URL;
+
 const QUARTZ_AUTH = Object.freeze({
     supabaseUrl: "https://gnslhfxlonwgmygbgxnm.supabase.co",
     supabaseAnonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imduc2xoZnhsb253Z215Z2JneG5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyMDM5MjYsImV4cCI6MjA5Nzc3OTkyNn0.y96BrMK-gPnKyJzfsFMpSCL2MoOdxHDBjl4_NJqCqMQ",
     googleClientId: "52937508326-7v0tlk5ffkubkqb60vretfocv4j7i624.apps.googleusercontent.com",
-    googleRedirectUrl: `${window.location.origin}/html/home.html`,
+    googleRedirectUrl: `${authRedirectBase}/html/home.html`,
 });
 
 let currentUser = null;
