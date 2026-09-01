@@ -115,7 +115,7 @@ const MIME_TYPES = {
 };
 
 function serveStatic(request, response) {
-  const requestedPath = request.url === '/' ? '/html/index.html' : request.url.split('?')[0];
+  const requestedPath = request.url === '/' ? '/html/home.html' : request.url.split('?')[0];
   const filePath = path.resolve(STATIC_ROOT, `.${requestedPath}`);
   if (!filePath.startsWith(`${STATIC_ROOT}${path.sep}`)) {
     response.writeHead(404);

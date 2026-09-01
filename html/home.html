@@ -46,7 +46,35 @@
 
     <div id="academicToast" class="academic-toast" role="status" aria-live="polite"></div>
 
-    <!-- Login removed: app opens directly to Home -->
+    <div class="auth-shell" aria-live="polite">
+        <div class="auth-card">
+            <p class="auth-tag">Quartz access</p>
+            <h2>Sign in or log in</h2>
+            <button class="auth-google-button" type="button" aria-label="Continue with Google">
+                <span class="google-icon">G</span>
+                <span>Continue with Google</span>
+            </button>
+
+            <div class="auth-divider"><span>or continue with email</span></div>
+
+            <form class="auth-form" id="authForm">
+                <label class="auth-field" for="authEmail">
+                    <span>Email</span>
+                    <input id="authEmail" name="email" type="email" placeholder="you@example.com" required>
+                </label>
+
+                <label class="auth-field" for="authPassword">
+                    <span>Password</span>
+                    <input id="authPassword" name="password" type="password" placeholder="Enter your password" required>
+                </label>
+
+                <div class="auth-actions">
+                    <button type="submit" class="auth-submit-button" data-auth-mode="login">Log in</button>
+                    <button type="button" class="auth-submit-button auth-submit-button-secondary" data-auth-mode="signup">Create account</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Navigation Bar -->
     <nav class="navbar">
@@ -56,7 +84,7 @@
                 <span class="brand-text">QUARTZ</span>
             </div>
             <ul class="nav-menu">
-                <li><a href=home.html"" class="nav-link active">Home</a></li>
+                <li><a href="home.html" class="nav-link active">Home</a></li>
                 <li><a href="quartz.html" class="nav-link">school mode</a></li>
                 <li><a href="notes.html" class="nav-link">Notes</a></li>
                 <li><a href="#" class="nav-link">Profile</a></li>
@@ -181,6 +209,10 @@
                         <button class="btn btn-secondary">Open Notes</button>
                         <a href="chat.html" class="btn btn-secondary new-chat-link">New Chat</a>
                     </div>
+                    <button class="auth-google-button hero-google-button" type="button" aria-label="Continue with Google">
+                        <span class="google-icon">G</span>
+                        <span>Continue with Google</span>
+                    </button>
                 </div>
                 <div class="hero-visual">
                     <div class="crystal">
@@ -352,10 +384,12 @@
         </main>
     </div>
 
-    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="../js/academic-profile.js"></script>
     <script src="../js/academic-profile-init.js"></script>
     <script src="../js/theme-toggle.js"></script>
     <script src="../js/home.js"></script>
+
+<!-- This is a comment and will not be displayed -->
 </body>
 </html>
