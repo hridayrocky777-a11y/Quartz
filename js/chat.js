@@ -1,3 +1,4 @@
+
 const chatForm = document.getElementById('chatForm');
 const chatInput = document.getElementById('chatInput');
 const sendButton = document.getElementById('sendButton');
@@ -7,13 +8,15 @@ const welcomeState = document.getElementById('welcomeState');
 const newChatButton = document.getElementById('newChatButton');
 const recentChats = document.getElementById('recentChats');
 const suggestionButtons = document.querySelectorAll('[data-prompt]');
-const chatApiUrl = window.location.port === '3000'
-    ? '/api/chat'
-    : 'http://localhost:3000/api/chat';
+
+// Quartz production backend
+const chatApiUrl = 'https://quartz-1.onrender.com/api/chat';
 
 const state = {
     messages: [],
-    recentTitles: JSON.parse(sessionStorage.getItem('quartz-chat-titles') || '[]'),
+    recentTitles: JSON.parse(
+        sessionStorage.getItem('quartz-chat-titles') || '[]'
+    ),
     loading: false,
 };
 
@@ -27,11 +30,16 @@ function addMessage(role, text, isError = false) {
     avatar.setAttribute('aria-hidden', 'true');
 
     const content = document.createElement('div');
+
     const meta = document.createElement('p');
     meta.className = 'message-meta';
     meta.textContent = role === 'user' ? 'You' : 'Quartz AI';
-    const messageText = document.createElement(role === 'assistant' ? 'div' : 'p');
+
+    const messageText = document.createElement(
+        role === 'assistant' ? 'div' : 'p'
+    );
     messageText.className = 'message-text';
+
     if (role === 'assistant') {
         messageText.innerHTML = renderAssistantMarkdown(text);
     } else {
@@ -41,17 +49,23 @@ function addMessage(role, text, isError = false) {
     content.append(meta, messageText);
     message.append(avatar, content);
     messageList.appendChild(message);
+
     conversation.scrollTop = conversation.scrollHeight;
 }
 
 function renderAssistantMarkdown(text) {
-    if (typeof marked === 'undefined' || typeof DOMPurify === 'undefined') {
+    if (typeof marked === 'undefined' ||
+        typeof DOMPurify === 'undefined') {
         const fallback = document.createElement('p');
         fallback.textContent = text;
         return fallback.outerHTML;
     }
 
-    const markdownHtml = marked.parse(text, { breaks: true, gfm: true });
+    const markdownHtml = marked.parse(text, {
+        breaks: true,
+        gfm: true
+    });
+
     const safeHtml = DOMPurify.sanitize(markdownHtml);
     const rendered = document.createElement('div');
     rendered.innerHTML = safeHtml;
@@ -75,7 +89,17 @@ function showTyping() {
     const typing = document.createElement('article');
     typing.className = 'message';
     typing.id = 'typingMessage';
-    typing.innerHTML = '<div class="message-avatar" aria-hidden="true">QZ</div><div><p class="message-meta">Quartz AI</p><div class="typing" aria-label="Quartz AI is thinking"><span></span><span></span><span></span></div></div>';
+
+    typing.innerHTML = `
+        <div class="message-avatar" aria-hidden="true">QZ</div>
+        <div>
+            <p class="message-meta">Quartz AI</p>
+            <div class="typing" aria-label="Quartz AI is thinking">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    `;
+
     messageList.appendChild(typing);
     conversation.scrollTop = conversation.scrollHeight;
 }
@@ -89,11 +113,14 @@ function setLoading(loading) {
     sendButton.disabled = loading;
     chatInput.disabled = loading;
     sendButton.setAttribute('aria-busy', String(loading));
-    if (loading) showTyping(); else removeTyping();
+
+    if (loading) showTyping();
+    else removeTyping();
 }
 
 function renderRecentChats() {
     recentChats.replaceChildren();
+
     if (!state.recentTitles.length) {
         const empty = document.createElement('p');
         empty.className = 'recent-chat empty';
@@ -101,6 +128,7 @@ function renderRecentChats() {
         recentChats.appendChild(empty);
         return;
     }
+
     state.recentTitles.slice(0, 5).forEach((title) => {
         const item = document.createElement('button');
         item.className = 'recent-chat';
@@ -113,55 +141,90 @@ function renderRecentChats() {
 }
 
 function rememberChat(title) {
-    state.recentTitles = [title, ...state.recentTitles.filter((item) => item !== title)].slice(0, 5);
-    sessionStorage.setItem('quartz-chat-titles', JSON.stringify(state.recentTitles));
+    state.recentTitles = [
+        title,
+        ...state.recentTitles.filter(item => item !== title)
+    ].slice(0, 5);
+
+    sessionStorage.setItem(
+        'quartz-chat-titles',
+        JSON.stringify(state.recentTitles)
+    );
+
     renderRecentChats();
 }
 
 async function requestReply(userMessage) {
     const response = await fetch(chatApiUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userMessage }),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            message: userMessage
+        })
     });
 
     let data;
+
     try {
         data = await response.json();
-    } catch (error) {
+    } catch {
         throw new Error('The server returned an invalid response.');
     }
 
     if (!response.ok) {
-        throw new Error(typeof data?.error === 'string' ? data.error : 'Quartz could not answer right now.');
+        throw new Error(
+            typeof data?.error === 'string'
+                ? data.error
+                : 'Quartz could not answer right now.'
+        );
     }
-    if (typeof data?.message !== 'string' || !data.message.trim()) {
+
+    if (typeof data?.reply !== 'string' || !data.reply.trim()) {
         throw new Error('The AI returned an invalid response.');
     }
-    return data.message.trim();
+
+    return data.reply.trim();
 }
 
 async function sendMessage(text) {
     const userMessage = text.trim();
+
     if (!userMessage || state.loading) return;
 
     welcomeState.hidden = true;
     addMessage('user', userMessage);
-    state.messages.push({ role: 'user', text: userMessage });
+
+    state.messages.push({
+        role: 'user',
+        text: userMessage
+    });
+
     rememberChat(userMessage);
+
     chatInput.value = '';
     chatInput.style.height = 'auto';
+
     setLoading(true);
 
     try {
         const reply = await requestReply(userMessage);
+
         addMessage('assistant', reply);
-        state.messages.push({ role: 'assistant', text: reply });
+
+        state.messages.push({
+            role: 'assistant',
+            text: reply
+        });
+
     } catch (error) {
         const message = error instanceof TypeError
-            ? 'I could not reach the Quartz server. Please make sure the backend is running.'
+            ? 'Could not connect to Quartz server. Check your internet or backend.'
             : error.message || 'Something went wrong. Please try again.';
+
         addMessage('assistant', message, true);
+
     } finally {
         setLoading(false);
         chatInput.focus();
@@ -191,13 +254,17 @@ chatInput.addEventListener('keydown', (event) => {
 
 chatInput.addEventListener('input', () => {
     chatInput.style.height = 'auto';
-    chatInput.style.height = `${Math.min(chatInput.scrollHeight, 160)}px`;
+    chatInput.style.height =
+        `${Math.min(chatInput.scrollHeight, 160)}px`;
 });
 
 suggestionButtons.forEach((button) => {
-    button.addEventListener('click', () => sendMessage(button.dataset.prompt));
+    button.addEventListener('click', () => {
+        sendMessage(button.dataset.prompt);
+    });
 });
 
 newChatButton.addEventListener('click', resetChat);
+
 renderRecentChats();
 chatInput.focus();
