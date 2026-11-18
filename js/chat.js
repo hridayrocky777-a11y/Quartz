@@ -10,12 +10,18 @@ const recentChats = document.getElementById("recentChats");
 const suggestionButtons = document.querySelectorAll("[data-prompt]");
 
 const chatApiUrl = "https://quartz-1.onrender.com/api/chat";
+const STORAGE_KEY = "quartz_recent_chats";
 
 let messages = [];
 let isLoading = false;
+let activeChatId = null;
 
-const STORAGE_KEY = "quartz_recent_chats";
+// Generate a unique chat ID
+function createChatId() {
+    return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
 
+// Get saved chats
 function getSavedChats() {
     try {
         return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
@@ -24,10 +30,12 @@ function getSavedChats() {
     }
 }
 
+// Save chats
 function saveChats(chats) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(chats));
 }
 
+// Escape HTML
 function escapeHTML(text) {
     return String(text).replace(/[&<>"']/g, character => ({
         "&": "&amp;",
@@ -38,6 +46,7 @@ function escapeHTML(text) {
     })[character]);
 }
 
+// Render Markdown safely
 function renderMarkdown(text) {
     if (window.marked && window.DOMPurify) {
         const html = window.marked.parse(text);
@@ -47,9 +56,9 @@ function renderMarkdown(text) {
     return escapeHTML(text).replace(/\n/g, "<br>");
 }
 
+// Add message to screen
 function addMessage(role, content) {
     const message = document.createElement("div");
-
     message.className = `message ${role}-message`;
 
     const label = document.createElement("div");
@@ -62,7 +71,6 @@ function addMessage(role, content) {
 
     message.appendChild(label);
     message.appendChild(body);
-
     messageList.appendChild(message);
 
     if (window.renderMathInElement) {
@@ -80,6 +88,7 @@ function addMessage(role, content) {
     conversation.scrollTop = conversation.scrollHeight;
 }
 
+// Typing indicator
 function showTyping() {
     const typing = document.createElement("div");
 
@@ -95,6 +104,7 @@ function removeTyping() {
     document.getElementById("typingIndicator")?.remove();
 }
 
+// Render recent chats
 function renderRecentChats() {
     const chats = getSavedChats();
 
@@ -115,18 +125,30 @@ function renderRecentChats() {
     });
 }
 
+// Save or update current chat
 function saveCurrentChat() {
     if (messages.length === 0) return;
 
     const chats = getSavedChats();
 
-    const title = messages[0].content.slice(0, 35);
+    if (!activeChatId) {
+        activeChatId = createChatId();
+    }
 
     const currentChat = {
-        title,
-        messages,
+        id: activeChatId,
+        title: messages[0].content.slice(0, 35),
+        messages: [...messages],
         updatedAt: Date.now()
     };
+
+    const existingIndex = chats.findIndex(
+        chat => chat.id === activeChatId
+    );
+
+    if (existingIndex !== -1) {
+        chats.splice(existingIndex, 1);
+    }
 
     chats.unshift(currentChat);
 
@@ -134,11 +156,14 @@ function saveCurrentChat() {
     renderRecentChats();
 }
 
+// Load previous chat
 function loadChat(index) {
     const chats = getSavedChats();
     const selectedChat = chats[index];
 
     if (!selectedChat) return;
+
+    activeChatId = selectedChat.id || createChatId();
 
     messages = selectedChat.messages || [];
 
@@ -148,14 +173,19 @@ function loadChat(index) {
     messages.forEach(message => {
         addMessage(message.role, message.content);
     });
+
+    chatInput.focus();
 }
 
+// Start new chat
 function startNewChat() {
     if (messages.length > 0) {
         saveCurrentChat();
     }
 
     messages = [];
+    activeChatId = null;
+
     messageList.innerHTML = "";
     welcomeState.style.display = "";
 
@@ -163,11 +193,35 @@ function startNewChat() {
     chatInput.focus();
 }
 
+// Get authenticated Supabase session
+async function getAccessToken() {
+    const supabase = window.quartzSupabase;
+
+    if (!supabase) {
+        throw new Error(
+            "Supabase is not initialized. Please refresh the page."
+        );
+    }
+
+    const { data, error } = await supabase.auth.getSession();
+
+    if (error || !data.session) {
+        window.location.replace("login.html");
+        throw new Error("Your session has expired. Please log in again.");
+    }
+
+    return data.session.access_token;
+}
+
+// Send request to Render backend
 async function requestReply(userMessage) {
+    const accessToken = await getAccessToken();
+
     const response = await fetch(chatApiUrl, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${accessToken}`
         },
         body: JSON.stringify({
             message: userMessage
@@ -180,6 +234,13 @@ async function requestReply(userMessage) {
         data = await response.json();
     } catch {
         throw new Error("The server returned an invalid response.");
+    }
+
+    if (response.status === 401) {
+        await window.quartzSupabase.auth.signOut();
+        window.location.replace("login.html");
+
+        throw new Error("Please log in again.");
     }
 
     if (!response.ok) {
@@ -195,6 +256,7 @@ async function requestReply(userMessage) {
     return data.reply.trim();
 }
 
+// Send message
 async function sendMessage(text) {
     const userMessage = text.trim();
 
@@ -246,11 +308,13 @@ async function sendMessage(text) {
     }
 }
 
+// Form submission
 chatForm.addEventListener("submit", event => {
     event.preventDefault();
     sendMessage(chatInput.value);
 });
 
+// Enter to send, Shift + Enter for new line
 chatInput.addEventListener("keydown", event => {
     if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault();
@@ -258,13 +322,16 @@ chatInput.addEventListener("keydown", event => {
     }
 });
 
+// New chat button
 newChatButton.addEventListener("click", startNewChat);
 
+// Suggestion buttons
 suggestionButtons.forEach(button => {
     button.addEventListener("click", () => {
         sendMessage(button.dataset.prompt);
     });
 });
 
+// Initialize
 renderRecentChats();
 chatInput.focus();
