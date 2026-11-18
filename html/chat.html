@@ -11,9 +11,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
 
     <style>
-        body {
-            visibility: hidden;
-        }
+        body { visibility: hidden; }
 
         .logout-button {
             border: 1px solid var(--border-color, #ddd);
@@ -23,10 +21,6 @@
             background: transparent;
             color: inherit;
             font: inherit;
-        }
-
-        .logout-button:hover {
-            opacity: 0.75;
         }
     </style>
 </head>
@@ -44,7 +38,7 @@
                 </div>
 
                 <button class="new-chat-button" id="newChatButton" type="button">
-                    <span aria-hidden="true">+</span>
+                    <span>+</span>
                     <span>New chat</span>
                 </button>
 
@@ -87,7 +81,7 @@
                         type="button"
                         aria-label="Toggle theme"
                         title="Toggle theme">
-                        <span aria-hidden="true">☼</span>
+                        <span>☼</span>
                     </button>
 
                     <button class="logout-button" id="logoutButton" type="button">
@@ -96,27 +90,20 @@
                 </div>
             </header>
 
-            <section class="conversation"
-                id="conversation"
-                aria-live="polite"
-                aria-label="Chat messages">
+            <section class="conversation" id="conversation"
+                aria-live="polite" aria-label="Chat messages">
 
                 <div class="welcome-state" id="welcomeState">
-                    <div class="welcome-orb" aria-hidden="true">
-                        <span>Q</span>
-                    </div>
-
+                    <div class="welcome-orb"><span>Q</span></div>
                     <p class="eyebrow">Your study companion</p>
                     <h2>What are you working on?</h2>
-
                     <p class="welcome-copy">
                         Ask for an explanation, a practice quiz,
                         or a clearer way to understand your notes.
                     </p>
 
                     <div class="suggestion-grid">
-                        <button class="suggestion-card"
-                            type="button"
+                        <button class="suggestion-card" type="button"
                             data-prompt="Explain photosynthesis in simple terms">
                             <span class="suggestion-icon">◌</span>
                             <span>
@@ -125,8 +112,7 @@
                             </span>
                         </button>
 
-                        <button class="suggestion-card"
-                            type="button"
+                        <button class="suggestion-card" type="button"
                             data-prompt="Create five practice questions about quadratic equations">
                             <span class="suggestion-icon">?</span>
                             <span>
@@ -135,8 +121,7 @@
                             </span>
                         </button>
 
-                        <button class="suggestion-card"
-                            type="button"
+                        <button class="suggestion-card" type="button"
                             data-prompt="Help me create a study plan for my next exam">
                             <span class="suggestion-icon">↗</span>
                             <span>
@@ -152,20 +137,15 @@
 
             <section class="composer-area">
                 <form class="composer" id="chatForm">
-                    <label class="sr-only" for="chatInput">
-                        Message Quartz AI
-                    </label>
+                    <label class="sr-only" for="chatInput">Message Quartz AI</label>
 
-                    <textarea id="chatInput"
-                        rows="1"
+                    <textarea id="chatInput" rows="1"
                         placeholder="Message Quartz AI..."
                         autocomplete="off"></textarea>
 
-                    <button class="send-button"
-                        id="sendButton"
-                        type="submit"
-                        aria-label="Send message">
-                        <span aria-hidden="true">↑</span>
+                    <button class="send-button" id="sendButton"
+                        type="submit" aria-label="Send message">
+                        <span>↑</span>
                     </button>
                 </form>
 
@@ -185,7 +165,6 @@
     <script src="../js/theme-toggle.js"></script>
     <script src="../js/chat.js"></script>
 
-    <!-- Supabase login protection -->
     <script type="module">
         import { createClient } from
             "https://esm.sh/@supabase/supabase-js@2";
@@ -198,7 +177,12 @@
             SUPABASE_KEY
         );
 
+        window.quartzSupabase = supabase;
+
         async function protectChat() {
+            const logoutButton =
+                document.getElementById("logoutButton");
+
             try {
                 const { data, error } =
                     await supabase.auth.getSession();
@@ -209,9 +193,6 @@
                 }
 
                 document.body.style.visibility = "visible";
-
-                const logoutButton =
-                    document.getElementById("logoutButton");
 
                 logoutButton.addEventListener("click", async () => {
                     logoutButton.disabled = true;
