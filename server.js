@@ -87,7 +87,7 @@ async function requireAuth(req, res, next) {
         }
 
         req.user = data.user;
-        next();
+        return next();
 
     } catch (error) {
         console.error("Authentication error:", error.message);
