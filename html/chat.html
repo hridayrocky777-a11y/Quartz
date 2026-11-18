@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,9 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Quartz AI study assistant chat">
     <title>Quartz Chat | AI Study Assistant</title>
+
     <link rel="stylesheet" href="../css/chat.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
+
+    <style>
+        body { visibility: hidden; }
+
+        .logout-button {
+            border: 1px solid var(--border-color, #ddd);
+            border-radius: 10px;
+            padding: 9px 14px;
+            cursor: pointer;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+        }
+    </style>
 </head>
+
 <body>
     <div class="app-shell">
         <aside class="sidebar" aria-label="Chat navigation">
@@ -21,15 +38,15 @@
                 </div>
 
                 <button class="new-chat-button" id="newChatButton" type="button">
-                    <span aria-hidden="true">+</span>
+                    <span>+</span>
                     <span>New chat</span>
                 </button>
 
                 <nav class="sidebar-nav" aria-label="Primary">
-                    <a class="sidebar-link" href="home.html"><span class="nav-icon" aria-hidden="true">⌂</span><span>Home</span></a>
-                    <a class="sidebar-link" href="focus.html"><span class="nav-icon" aria-hidden="true">◷</span><span>Focus</span></a>
-                    <a class="sidebar-link active" href="chat.html" aria-current="page"><span class="nav-icon" aria-hidden="true">◇</span><span>Chat</span></a>
-                    <a class="sidebar-link" href="backpack.html"><span class="nav-icon" aria-hidden="true">▣</span><span>Backpack</span></a>
+                    <a class="sidebar-link" href="home.html">⌂ Home</a>
+                    <a class="sidebar-link" href="focus.html">◷ Focus</a>
+                    <a class="sidebar-link active" href="chat.html">◇ Chat</a>
+                    <a class="sidebar-link" href="backpack.html">▣ Backpack</a>
                 </nav>
 
                 <div class="recent-section">
@@ -39,8 +56,11 @@
             </div>
 
             <div class="sidebar-footer">
-                <div class="assistant-status"><span class="status-dot"></span><span>Quartz AI online</span></div>
-                <a class="sidebar-link" href="home.html"><span class="nav-icon" aria-hidden="true">←</span><span>Back to dashboard</span></a>
+                <div class="assistant-status">
+                    <span class="status-dot"></span>
+                    <span>Quartz AI online</span>
+                </div>
+                <a class="sidebar-link" href="home.html">← Back to dashboard</a>
             </div>
         </aside>
 
@@ -50,47 +70,89 @@
                     <p class="eyebrow">QUARTZ / AI CHAT</p>
                     <h1>Study with clarity.</h1>
                 </div>
+
                 <div class="header-actions">
-                    <span class="model-badge"><span class="model-dot"></span>Gemini study model</span>
-                    <button class="theme-toggle-btn icon-button" type="button" aria-label="Toggle theme" title="Toggle theme">
-                        <span aria-hidden="true">☼</span>
+                    <span class="model-badge">
+                        <span class="model-dot"></span>
+                        Gemini study model
+                    </span>
+
+                    <button class="theme-toggle-btn icon-button"
+                        type="button"
+                        aria-label="Toggle theme"
+                        title="Toggle theme">
+                        <span>☼</span>
+                    </button>
+
+                    <button class="logout-button" id="logoutButton" type="button">
+                        Log out
                     </button>
                 </div>
             </header>
 
-            <section class="conversation" id="conversation" aria-live="polite" aria-label="Chat messages">
+            <section class="conversation" id="conversation"
+                aria-live="polite" aria-label="Chat messages">
+
                 <div class="welcome-state" id="welcomeState">
-                    <div class="welcome-orb" aria-hidden="true"><span>Q</span></div>
+                    <div class="welcome-orb"><span>Q</span></div>
                     <p class="eyebrow">Your study companion</p>
                     <h2>What are you working on?</h2>
-                    <p class="welcome-copy">Ask for an explanation, a practice quiz, or a clearer way to understand your notes.</p>
-                    <div class="suggestion-grid" aria-label="Suggested prompts">
-                        <button class="suggestion-card" type="button" data-prompt="Explain photosynthesis in simple terms">
-                            <span class="suggestion-icon" aria-hidden="true">◌</span>
-                            <span><strong>Explain a concept</strong><small>Make a difficult idea click</small></span>
+                    <p class="welcome-copy">
+                        Ask for an explanation, a practice quiz,
+                        or a clearer way to understand your notes.
+                    </p>
+
+                    <div class="suggestion-grid">
+                        <button class="suggestion-card" type="button"
+                            data-prompt="Explain photosynthesis in simple terms">
+                            <span class="suggestion-icon">◌</span>
+                            <span>
+                                <strong>Explain a concept</strong>
+                                <small>Make a difficult idea click</small>
+                            </span>
                         </button>
-                        <button class="suggestion-card" type="button" data-prompt="Create five practice questions about quadratic equations">
-                            <span class="suggestion-icon" aria-hidden="true">?</span>
-                            <span><strong>Make practice questions</strong><small>Test what you know</small></span>
+
+                        <button class="suggestion-card" type="button"
+                            data-prompt="Create five practice questions about quadratic equations">
+                            <span class="suggestion-icon">?</span>
+                            <span>
+                                <strong>Make practice questions</strong>
+                                <small>Test what you know</small>
+                            </span>
                         </button>
-                        <button class="suggestion-card" type="button" data-prompt="Help me create a study plan for my next exam">
-                            <span class="suggestion-icon" aria-hidden="true">↗</span>
-                            <span><strong>Build a study plan</strong><small>Turn goals into next steps</small></span>
+
+                        <button class="suggestion-card" type="button"
+                            data-prompt="Help me create a study plan for my next exam">
+                            <span class="suggestion-icon">↗</span>
+                            <span>
+                                <strong>Build a study plan</strong>
+                                <small>Turn goals into next steps</small>
+                            </span>
                         </button>
                     </div>
                 </div>
+
                 <div class="message-list" id="messageList"></div>
             </section>
 
             <section class="composer-area">
                 <form class="composer" id="chatForm">
                     <label class="sr-only" for="chatInput">Message Quartz AI</label>
-                    <textarea id="chatInput" rows="1" placeholder="Message Quartz AI..." autocomplete="off"></textarea>
-                    <button class="send-button" id="sendButton" type="submit" aria-label="Send message" title="Send message">
-                        <span aria-hidden="true">↑</span>
+
+                    <textarea id="chatInput" rows="1"
+                        placeholder="Message Quartz AI..."
+                        autocomplete="off"></textarea>
+
+                    <button class="send-button" id="sendButton"
+                        type="submit" aria-label="Send message">
+                        <span>↑</span>
                     </button>
                 </form>
-                <p class="composer-note">Quartz can make mistakes. Check important information with your teacher or course material.</p>
+
+                <p class="composer-note">
+                    Quartz can make mistakes. Check important information
+                    with your teacher or course material.
+                </p>
             </section>
         </main>
     </div>
@@ -99,7 +161,62 @@
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script>
+
     <script src="../js/theme-toggle.js"></script>
     <script src="../js/chat.js"></script>
+
+    <script type="module">
+        import { createClient } from
+            "https://esm.sh/@supabase/supabase-js@2";
+
+        const SUPABASE_URL = "https://vehhcwpdlotwdmozgauj.supabase.co/rest/v1/";
+        const SUPABASE_KEY = "sb_publishable_vnX5lJRzvVmt0M6GzaYREQ_yOxqXfOl";
+
+        const supabase = createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+        window.quartzSupabase = supabase;
+
+        async function protectChat() {
+            const logoutButton =
+                document.getElementById("logoutButton");
+
+            try {
+                const { data, error } =
+                    await supabase.auth.getSession();
+
+                if (error || !data.session) {
+                    window.location.replace("login.html");
+                    return;
+                }
+
+                document.body.style.visibility = "visible";
+
+                logoutButton.addEventListener("click", async () => {
+                    logoutButton.disabled = true;
+                    logoutButton.textContent = "Logging out...";
+
+                    const { error } = await supabase.auth.signOut();
+
+                    if (error) {
+                        alert("Logout failed. Please try again.");
+                        logoutButton.disabled = false;
+                        logoutButton.textContent = "Log out";
+                        return;
+                    }
+
+                    window.location.replace("login.html");
+                });
+
+            } catch (error) {
+                console.error("Authentication error:", error);
+                window.location.replace("login.html");
+            }
+        }
+
+        protectChat();
+    </script>
 </body>
 </html>
