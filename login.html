@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Quartz.AI</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #080b16;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .card {
+      width: min(90%, 400px);
+      padding: 35px;
+      background: #12182a;
+      border: 1px solid #283451;
+      border-radius: 18px;
+    }
+
+    h1, p { text-align: center; }
+    p { color: #aab4ca; }
+
+    input, button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 14px;
+      border-radius: 9px;
+      font-size: 15px;
+    }
+
+    input {
+      background: #080e1e;
+      border: 1px solid #35415d;
+      color: white;
+    }
+
+    button {
+      border: 0;
+      background: #8065ff;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #status {
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    a { color: #a997ff; }
+  </style>
+</head>
+
+<body>
+  <main class="card">
+    <h1>Quartz.AI</h1>
+    <p>Welcome back!</p>
+
+    <form id="loginForm">
+      <input id="email" type="email"
+        placeholder="Email address" required>
+
+      <input id="password" type="password"
+        placeholder="Password" required>
+
+      <button id="loginButton" type="submit">
+        Login
+      </button>
+    </form>
+
+    <p id="status" role="status"></p>
+
+    <p>New to Quartz.AI?
+      <a href="signup.html">Create account</a>
+    </p>
+  </main>
+
+  <script type="module">
+    import { createClient } from
+      "https://esm.sh/@supabase/supabase-js@2";
+
+    const SUPABASE_URL = "https://vehhcwpdlotwdmozgauj.supabase.co/rest/v1/";
+    const SUPABASE_KEY = "sb_publishable_vnX5lJRzvVmt0M6GzaYREQ_yOxqXfOl";
+
+    const supabase = createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+    const form = document.getElementById("loginForm");
+    const status = document.getElementById("status");
+    const button = document.getElementById("loginButton");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      button.disabled = true;
+      status.textContent = "Logging in...";
+
+      try {
+        const { data, error } =
+          await supabase.auth.signInWithPassword({
+            email: document.getElementById("email").value.trim(),
+            password: document.getElementById("password").value
+          });
+
+        if (error) throw error;
+
+        status.textContent = "Login successful!";
+
+        // Temporary destination until dashboard is created.
+        window.location.href = "chat.html";
+
+      } catch (error) {
+        status.textContent = error.message;
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
