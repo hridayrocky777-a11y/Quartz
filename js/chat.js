@@ -16,12 +16,10 @@ let messages = [];
 let isLoading = false;
 let activeChatId = null;
 
-// Generate a unique chat ID
 function createChatId() {
     return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
-// Get saved chats
 function getSavedChats() {
     try {
         return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
@@ -30,12 +28,10 @@ function getSavedChats() {
     }
 }
 
-// Save chats
 function saveChats(chats) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(chats));
 }
 
-// Escape HTML
 function escapeHTML(text) {
     return String(text).replace(/[&<>"']/g, character => ({
         "&": "&amp;",
@@ -46,7 +42,6 @@ function escapeHTML(text) {
     })[character]);
 }
 
-// Render Markdown safely
 function renderMarkdown(text) {
     if (window.marked && window.DOMPurify) {
         const html = window.marked.parse(text);
@@ -56,7 +51,6 @@ function renderMarkdown(text) {
     return escapeHTML(text).replace(/\n/g, "<br>");
 }
 
-// Add message to screen
 function addMessage(role, content) {
     const message = document.createElement("div");
     message.className = `message ${role}-message`;
@@ -88,7 +82,6 @@ function addMessage(role, content) {
     conversation.scrollTop = conversation.scrollHeight;
 }
 
-// Typing indicator
 function showTyping() {
     const typing = document.createElement("div");
 
@@ -104,7 +97,6 @@ function removeTyping() {
     document.getElementById("typingIndicator")?.remove();
 }
 
-// Render recent chats
 function renderRecentChats() {
     const chats = getSavedChats();
 
@@ -125,7 +117,6 @@ function renderRecentChats() {
     });
 }
 
-// Save or update current chat
 function saveCurrentChat() {
     if (messages.length === 0) return;
 
@@ -156,7 +147,6 @@ function saveCurrentChat() {
     renderRecentChats();
 }
 
-// Load previous chat
 function loadChat(index) {
     const chats = getSavedChats();
     const selectedChat = chats[index];
@@ -177,7 +167,6 @@ function loadChat(index) {
     chatInput.focus();
 }
 
-// Start new chat
 function startNewChat() {
     if (messages.length > 0) {
         saveCurrentChat();
@@ -206,8 +195,11 @@ async function getAccessToken() {
     const { data, error } = await supabase.auth.getSession();
 
     if (error || !data.session) {
-        window.location.replace("login.html");
-        throw new Error("Your session has expired. Please log in again.");
+        window.location.replace("../login.html");
+
+        throw new Error(
+            "Your session has expired. Please log in again."
+        );
     }
 
     return data.session.access_token;
@@ -238,14 +230,15 @@ async function requestReply(userMessage) {
 
     if (response.status === 401) {
         await window.quartzSupabase.auth.signOut();
-        window.location.replace("login.html");
+        window.location.replace("../login.html");
 
         throw new Error("Please log in again.");
     }
 
     if (!response.ok) {
         throw new Error(
-            data.error || data.message || `Server error: ${response.status}`
+            data.error || data.message ||
+            `Server error: ${response.status}`
         );
     }
 
