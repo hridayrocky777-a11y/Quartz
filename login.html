@@ -52,6 +52,11 @@
       cursor: pointer;
     }
 
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
     #status {
       font-size: 14px;
       overflow-wrap: anywhere;
@@ -89,8 +94,11 @@
     import { createClient } from
       "https://esm.sh/@supabase/supabase-js@2";
 
-    const SUPABASE_URL = "https://vehhcwpdlotwdmozgauj.supabase.co/rest/v1/";
-    const SUPABASE_KEY = "sb_publishable_vnX5lJRzvVmt0M6GzaYREQ_yOxqXfOl";
+    const SUPABASE_URL =
+      "https://vehhcwpdlotwdmozgauj.supabase.co";
+
+    const SUPABASE_KEY =
+      "sb_publishable_vnX5lJRzvVmt0M6GzaYREQ_yOxqXfOl";
 
     const supabase = createClient(
       SUPABASE_URL,
@@ -108,7 +116,7 @@
       status.textContent = "Logging in...";
 
       try {
-        const { data, error } =
+        const { error } =
           await supabase.auth.signInWithPassword({
             email: document.getElementById("email").value.trim(),
             password: document.getElementById("password").value
@@ -118,8 +126,7 @@
 
         status.textContent = "Login successful!";
 
-        // Temporary destination until dashboard is created.
-        window.location.href = "chat.html";
+        window.location.replace("html/chat.html");
 
       } catch (error) {
         status.textContent = error.message;
