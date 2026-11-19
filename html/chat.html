@@ -169,8 +169,11 @@
         import { createClient } from
             "https://esm.sh/@supabase/supabase-js@2";
 
-        const SUPABASE_URL = "https://vehhcwpdlotwdmozgauj.supabase.co/rest/v1/";
-        const SUPABASE_KEY = "sb_publishable_vnX5lJRzvVmt0M6GzaYREQ_yOxqXfOl";
+        const SUPABASE_URL =
+            "https://vehhcwpdlotwdmozgauj.supabase.co";
+
+        const SUPABASE_KEY =
+            "sb_publishable_vnX5lJRzvVmt0M6GzaYREQ_yOxqXfOl";
 
         const supabase = createClient(
             SUPABASE_URL,
@@ -188,7 +191,7 @@
                     await supabase.auth.getSession();
 
                 if (error || !data.session) {
-                    window.location.replace("login.html");
+                    window.location.replace("../login.html");
                     return;
                 }
 
@@ -207,12 +210,12 @@
                         return;
                     }
 
-                    window.location.replace("login.html");
+                    window.location.replace("../login.html");
                 });
 
             } catch (error) {
                 console.error("Authentication error:", error);
-                window.location.replace("login.html");
+                window.location.replace("../login.html");
             }
         }
 
