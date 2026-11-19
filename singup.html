@@ -52,6 +52,11 @@
       cursor: pointer;
     }
 
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
     #status {
       font-size: 14px;
       overflow-wrap: anywhere;
@@ -67,12 +72,22 @@
     <p>Create your account</p>
 
     <form id="signupForm">
-      <input id="email" type="email"
-        placeholder="Email address" required>
+      <input
+        id="email"
+        type="email"
+        placeholder="Email address"
+        autocomplete="email"
+        required
+      >
 
-      <input id="password" type="password"
+      <input
+        id="password"
+        type="password"
         placeholder="Password (minimum 8 characters)"
-        minlength="8" required>
+        minlength="8"
+        autocomplete="new-password"
+        required
+      >
 
       <button type="submit" id="signupButton">
         Create Account
@@ -90,8 +105,11 @@
     import { createClient } from
       "https://esm.sh/@supabase/supabase-js@2";
 
-    const SUPABASE_URL = "https://vehhcwpdlotwdmozgauj.supabase.co/rest/v1/";
-    const SUPABASE_KEY = "sb_publishable_vnX5lJRzvVmt0M6GzaYREQ_yOxqXfOl";
+    const SUPABASE_URL =
+      "https://vehhcwpdlotwdmozgauj.supabase.co";
+
+    const SUPABASE_KEY =
+      "sb_publishable_vnX5lJRzvVmt0M6GzaYREQ_yOxqXfOl";
 
     const supabase = createClient(
       SUPABASE_URL,
@@ -105,31 +123,35 @@
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
 
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
+      const email =
+        document.getElementById("email").value.trim();
+
+      const password =
+        document.getElementById("password").value;
 
       button.disabled = true;
       status.textContent = "Creating your account...";
 
       try {
-        const { data, error } = await supabase.auth.signUp({
+        const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo:
-              window.location.origin + "/Quartz/html/login.html"
+              window.location.origin + "/Quartz/login.html"
           }
         });
 
         if (error) throw error;
 
         status.textContent =
-          "Account created! Check your email for verification.";
+          "Account created! Check your email and verify your account before logging in.";
 
         form.reset();
 
       } catch (error) {
-        status.textContent = error.message;
+        status.textContent =
+          "Signup failed: " + error.message;
       } finally {
         button.disabled = false;
       }
